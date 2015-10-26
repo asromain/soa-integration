@@ -2,6 +2,7 @@ package business;
 
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,7 +13,7 @@ import java.util.Map;
  *
  * specializedAttributes -> proprietes specifiques aux differentes boutiques
  */
-public class Product {
+public class Product implements Serializable {
 
     private String name;
     private String idShop;
@@ -24,10 +25,8 @@ public class Product {
         JSONObject product = new JSONObject(attributs);
         this.specializedAttributes = new HashMap<String, String>();
 
-       
-
-
 
     }
+
 
 }
