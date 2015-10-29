@@ -14,7 +14,7 @@
         <camel.version>2.15.2</camel.version>
         <!-- OSGI bundle information (needed to deploy on ServiceMix) -->
         <bundle.symbolicName>${project.artifactId}</bundle.symbolicName>
-        <bundle.namespace>fr.unice.polytech.soa1.cookbook</bundle.namespace>
+        <bundle.namespace>fr.SOA.shopping3000.shopping3000-integration</bundle.namespace>
     </properties>
 
     <dependencies>
@@ -70,7 +70,7 @@
                         <Bundle-SymbolicName>${bundle.symbolicName}</Bundle-SymbolicName>
                         <Bundle-Version>${project.version}</Bundle-Version>
                         <Import-Package>*</Import-Package>
-                        <Export-Package>${bundle.namespace}.flows.*;version="${project.version}"</Export-Package>
+                        <Export-Package>${bundle.namespace}.fr.SOA.shopping3000.flows.*;version="${project.version}"</Export-Package>
                     </instructions>
                 </configuration>
             </plugin>

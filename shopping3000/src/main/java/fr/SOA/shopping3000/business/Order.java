@@ -1,4 +1,4 @@
-package business;
+package fr.SOA.shopping3000.business;
 
 import java.io.Serializable;
 
