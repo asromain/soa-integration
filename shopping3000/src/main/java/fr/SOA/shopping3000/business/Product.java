@@ -15,15 +15,10 @@ import java.util.Map;
  */
 public class Product implements Serializable {
 
-    private String name;
-    private String idShop;
-    private String cost;
 
-    private Map<String, String> specializedAttributes;
 
-    public Product(String attributs) {
-        JSONObject product = new JSONObject(attributs);
-        this.specializedAttributes = new HashMap<String, String>();
+    public Product() {
+
 
 
     }
