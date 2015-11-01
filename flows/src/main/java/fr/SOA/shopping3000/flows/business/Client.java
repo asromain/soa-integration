@@ -1,4 +1,4 @@
-package fr.SOA.shopping3000.business;
+package fr.SOA.shopping3000.flows.business;
 
 import java.io.Serializable;
 import java.util.HashMap;

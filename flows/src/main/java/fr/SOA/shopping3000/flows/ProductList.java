@@ -6,17 +6,26 @@ import org.apache.camel.builder.RouteBuilder;
  * Created by user on 29/10/2015.
  */
 public class ProductList extends RouteBuilder {
+
     @Override
     public void configure() throws Exception {
-
-        from("direct:getProductList")
-                .setBody(simple("Hello world !"));
 
         restConfiguration().component("servlet");
 
         rest("/product")
                 .get()
                 .to("direct:getProductList");
+
+        from("direct:getProductList")
+                .setBody(simple("Hello world !"));
+
+        rest("/products")
+                .get()
+                .to("direct:getProductList2");
+
+        from("direct:getProductList2")
+                .setBody(simple("Hello world two 2 !"));
+
 
     }
 }

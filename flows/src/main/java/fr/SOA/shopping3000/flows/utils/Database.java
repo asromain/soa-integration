@@ -1,9 +1,10 @@
-package fr.SOA.shopping3000.utils;
+package fr.SOA.shopping3000.flows.utils;
 
 
-import fr.SOA.shopping3000.business.Client;
-import fr.SOA.shopping3000.business.Order;
-import fr.SOA.shopping3000.business.Product;
+import fr.SOA.shopping3000.flows.business.Client;
+import fr.SOA.shopping3000.flows.business.Order;
+import fr.SOA.shopping3000.flows.business.Product;
+
 import java.util.HashMap;
 import java.util.Map;
 

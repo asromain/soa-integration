@@ -7,10 +7,23 @@
         http://www.osgi.org/xmlns/blueprint/v1.0.0
         http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd" >
 
+
+    <!--
+        ******************************************************
+        * To declare the routes defined for the camel engine *
+        ******************************************************
+    -->
+
     <camelContext xmlns="http://camel.apache.org/schema/blueprint">
         <package>fr.SOA.shopping3000.flows</package>
     </camelContext>
 
+
+    <!--
+        ******************************************************************
+        * To setup camel servlet with OSGi HttpService for REST services *
+        ******************************************************************
+    -->
     <reference id="httpService" interface="org.osgi.service.http.HttpService"/>
 
     <bean class="org.apache.camel.component.servlet.osgi.OsgiServletRegisterer"
@@ -22,5 +35,6 @@
     </bean>
 
     <bean id="camelServlet" class="org.apache.camel.component.servlet.CamelHttpTransportServlet"/>
+
 
 </blueprint>

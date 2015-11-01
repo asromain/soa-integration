@@ -1,10 +1,6 @@
-package fr.SOA.shopping3000.business;
-
-import org.json.JSONObject;
+package fr.SOA.shopping3000.flows.business;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by Pierre on 26/10/2015.
