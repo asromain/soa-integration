@@ -30,8 +30,8 @@ public final class Database {
     }
 
     //TODO implementer
-    static public void createProduct(){
-        Product products = new Product();
+    static public void createProduct(String id, String name, String shop, String prix){
+        Product products = new Product(id, name, shop, prix);
         //products.put();
     }
 
