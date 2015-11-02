@@ -18,11 +18,11 @@ public class ProductList extends RouteBuilder {
     @Override
     public void configure() throws Exception {
 
-//        restConfiguration().component("servlet");
+        restConfiguration().component("servlet");
 //
-//        rest("/product")
-//                .get()
-//                .to("direct:getProductList");
+        rest("product")
+                .get()
+                .to("direct:getProductList");
 //
 //        from("direct:getProductList")
 //                .setBody(simple("Hello world !"));
@@ -34,10 +34,10 @@ public class ProductList extends RouteBuilder {
 //        from("direct:getProductList2")
 //                .setBody(simple("Hello world two 2 !"));
 
-        from("direct:art")
+        from("direct:getProductList")
                 .setHeader(Exchange.HTTP_METHOD, constant("GET"))
                 .setBody(constant(""))
-                .to(GEN_SERVICE + "/cxf/arts/products")
+                .to("http://localhost:8181/cxf/services/stock?bridgeEndpoint=true")
                 .process(readResponseStream)
                 ;
     }
