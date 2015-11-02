@@ -1,18 +1,9 @@
 package fr.SOA.shopping3000.flows;
 
+import fr.SOA.shopping3000.flows.utils.Endpoints;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import static fr.SOA.shopping3000.flows.utils.Endpoints.*;
-
-/**
- * Created by user on 29/10/2015.
- */
 public class ProductList extends RouteBuilder {
 
     @Override
@@ -40,7 +31,7 @@ public class ProductList extends RouteBuilder {
         from("direct:artproducts")
                 .log("issy")
                 .setHeader(Exchange.HTTP_METHOD, constant("GET"))
-                .to(GEN_SERVICE + "/cxf/arts/products?bridgeEndpoint=true")
+                .to(Endpoints.BASE_URL + "/arts/products?bridgeEndpoint=true")
                 ;
     }
 
