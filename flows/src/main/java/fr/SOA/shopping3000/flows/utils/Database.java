@@ -24,9 +24,9 @@ public final class Database {
     }
 
     //TODO implementer
-    static public void createOrder(){
-        Order curentOrder = new Order();
-        //orders.put();
+    static public void createOrder(String id, String address, String totPrice){
+        Order curentOrder = new Order(id, address, totPrice);
+        orders.put(id, curentOrder);
     }
 
     //TODO implementer

@@ -14,17 +14,17 @@ import java.util.Map;
 public class Product implements Serializable {
 
 
-    private String name;
     private String id;
-    private String prix;
+    private String name;
+    private String price;
     private String shop;
 
     private Map<String, String> specializedAttributes;
 
-    public Product(String name, String id, String prix, String shop) {
+    public Product(String name, String id, String price, String shop) {
         this.name = name;
         this.id = id;
-        this.prix = prix;
+        this.price = price;
         this.shop = shop;
         this.specializedAttributes = new HashMap<String, String>();
     }
@@ -37,12 +37,12 @@ public class Product implements Serializable {
         this.id = id;
     }
 
-    public String getPrix() {
-        return prix;
+    public String getPrice() {
+        return price;
     }
 
-    public void setPrix(String prix) {
-        this.prix = prix;
+    public void setPrice(String price) {
+        this.price = price;
     }
 
     public String getShop() {
