@@ -14,6 +14,7 @@ import java.util.Map;
 public class Order implements Serializable {
 
     private String id;
+    private String idClient;
     private String address;
     private double totPrice;
 
@@ -23,10 +24,11 @@ public class Order implements Serializable {
         this.products = new HashMap<String, Product>();
     }
 
-    public Order(String id, String address, double totPrice) {
+    public Order(String id, String idClient, String address) {
         this.id = id;
+        this.idClient = idClient;
         this.address = address;
-        this.totPrice = totPrice;
+        this.totPrice = 0;
         this.products = new HashMap<String, Product>();
     }
 
@@ -38,6 +40,13 @@ public class Order implements Serializable {
         this.id = id;
     }
 
+    public String getIdClient() {
+        return idClient;
+    }
+
+    public void setIdClient(String idClient) {
+        this.idClient = idClient;
+    }
     public String getAddress() {
         return address;
     }

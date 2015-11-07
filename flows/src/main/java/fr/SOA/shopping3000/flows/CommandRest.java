@@ -23,20 +23,80 @@ public class CommandRest extends RouteBuilder {
 
         restConfiguration().component("servlet");
 
+        /*
+         * REST
+         */
+
+        rest("/command/create/{client_id}/{command_address}")
+                .get()
+                .to("direct:commandCreate")
+        ;
+
+        rest("/command/addproduct/{command_id}/{product_id}")
+                .get()
+                .to("direct:commandAddProduct")
+        ;
 
         rest("/command/valid/{command_id}")
                 .get()
-                .to("direct:commandUser")
+                .to("direct:commandValid")
         ;
 
-        from("direct:commandUser")
-                .log("CommandRest user from rest")
+        /*
+         * FROM
+         */
+
+        from("direct:commandCreate")
+                .log("create an empty command")
+                .process(createOrder)
+        ;
+
+        from("direct:commandAddProduct")
+                .log("Add a product to a command")
+                .process(addProduct)
+        ;
+
+        from("direct:commandValid")
+                .log("valid a command")
                 .process(commandToCsv)
                 .log("drop csv in the command file")
                 .to(CSV_INPUT_DIRECTORY + "?fileName=${header.command_id}.csv")
         ;
     }
 
+
+    private static Processor createOrder = new Processor() {
+
+        public void process(Exchange exchange) throws Exception {
+
+            String orderId = Database.genUID();
+            String orderClientId = (String) exchange.getIn().getHeader("client_id");
+            String orderAddress = (String) exchange.getIn().getHeader("command_address");
+
+            //fill database
+            Database.createOrder(orderId, orderClientId, orderAddress);
+
+            exchange.getIn().setBody(orderId);
+        }
+
+    };
+
+    private static Processor addProduct = new Processor() {
+
+        public void process(Exchange exchange) throws Exception {
+
+            String prodId = (String) exchange.getIn().getHeader("product_id");
+            String commandId = (String) exchange.getIn().getHeader("command_id");
+
+            Product currentProduct = Database.getProduct(prodId);
+            Order currentOrder = Database.getOrder(commandId);
+            // TODO à verifier si le changement se fait dans la base de donnée
+            currentOrder.addProduct(currentProduct.getId(), currentProduct);
+
+            exchange.getIn().setBody("done");
+        }
+
+    };
 
     private static Processor commandToCsv = new Processor() {
 
@@ -46,9 +106,6 @@ public class CommandRest extends RouteBuilder {
         public void process(Exchange exchange) throws Exception {
 
             String commandId = (String) exchange.getIn().getHeader("command_id");
-
-            //fill database for test
-            Database.createOrder("5", "paris", 234.25);
 
             //get order from database
             Order order = Database.getOrder(commandId);
@@ -64,6 +121,7 @@ public class CommandRest extends RouteBuilder {
 
 
     };
+
 
 
 }
