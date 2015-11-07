@@ -3,20 +3,20 @@ package fr.SOA.shopping3000.flows;
 import static fr.SOA.shopping3000.flows.utils.Endpoints.*;
 
 import fr.SOA.shopping3000.flows.business.Order;
+import fr.SOA.shopping3000.flows.business.Product;
 import fr.SOA.shopping3000.flows.utils.Database;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.Processor;
 import org.apache.camel.Exchange;
 
+import java.lang.reflect.Array;
+import java.util.List;
 
 
 /**
  * Created by user on 29/10/2015.
  */
-public class Command extends RouteBuilder {
-
-    private static final String COMMA_DELIMITER = ",";
-    private static final String NEW_LINE_SEPARATOR = "\n";
+public class CommandRest extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
@@ -28,42 +28,39 @@ public class Command extends RouteBuilder {
                 .get()
                 .to("direct:commandUser")
         ;
+
         from("direct:commandUser")
-                .log("Command user from rest")
+                .log("CommandRest user from rest")
                 .process(commandToCsv)
                 .log("drop csv in the command file")
-                .to(CSV_OUTPUT_DIRECTORY + "?fileName=${header.command_id}.csv")
+                .to(CSV_INPUT_DIRECTORY + "?fileName=${header.command_id}.csv")
         ;
     }
 
 
     private static Processor commandToCsv = new Processor() {
 
+        private static final String COMMA_DELIMITER = ",";
+        private static final String NEW_LINE_SEPARATOR = "\n";
+
         public void process(Exchange exchange) throws Exception {
 
             String commandId = (String) exchange.getIn().getHeader("command_id");
 
             //fill database for test
-            Database.createOrder("5", "paris", "234");
+            Database.createOrder("5", "paris", 234.25);
 
             //get order from database
             Order order = Database.getOrder(commandId);
-            String csvHeader = order.getCSVHeader();
-            String csvOrder = order.toCSV();
-            String csvContent = csvHeader+"\n"+csvOrder;
 
+            String csvContent = buildCSV(order);
 
-            // retrieving the body of the exchanged message
-            //Map<String, Object> input = (Map<String, Object>) exchange.getIn().getBody();
-            // transforming the input into a person
-            //Person output =  builder(input);
-            // Putting the person inside the body of the message
             exchange.getIn().setBody(csvContent);
         }
 
-        //private void builder() {
-
-        //}
+        private String buildCSV(Order order) {
+            return order.toCSV();
+        }
 
 
     };

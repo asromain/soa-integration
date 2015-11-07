@@ -16,14 +16,17 @@ public class Product implements Serializable {
 
     private String id;
     private String name;
-    private String price;
     private String shop;
+    private double price;
 
     private Map<String, String> specializedAttributes;
 
-    public Product(String name, String id, String price, String shop) {
-        this.name = name;
+    public Product() {
+        this.specializedAttributes = new HashMap<String, String>();
+    }
+    public Product(String id, String name, String shop, double price) {
         this.id = id;
+        this.name = name;
         this.price = price;
         this.shop = shop;
         this.specializedAttributes = new HashMap<String, String>();
@@ -37,12 +40,12 @@ public class Product implements Serializable {
         this.id = id;
     }
 
-    public String getPrice() {
-        return price;
+    public String getName() {
+        return name;
     }
 
-    public void setPrice(String price) {
-        this.price = price;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getShop() {
@@ -53,12 +56,27 @@ public class Product implements Serializable {
         this.shop = shop;
     }
 
-    public String getName() {
-        return name;
+    public double getPrice() {
+        return price;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setPrice(double price) {
+        this.price = price;
     }
 
+
+    public Map<String, String> getSpecializedAttributes() {
+        return specializedAttributes;
+    }
+    public String getSpecializedAttribute(String key) {
+        return specializedAttributes.get(key);
+    }
+
+    public void setSpecializedAttribute(String key, String value) {
+        this.specializedAttributes.put(key, value);
+    }
+
+    public String deleteSpecializedAttribute(String key) {
+        return specializedAttributes.remove(key);
+    }
 }
