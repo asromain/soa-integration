@@ -1,9 +1,7 @@
 package fr.SOA.shopping3000.flows;
 
-import fr.SOA.shopping3000.flows.utils.Database;
 import fr.SOA.shopping3000.flows.utils.Endpoints;
 import org.apache.camel.Exchange;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 
 public class CatalogRoute extends RouteBuilder {
@@ -25,9 +23,8 @@ public class CatalogRoute extends RouteBuilder {
                 .to(Endpoints.BASE_URL + Endpoints.BASE_ART + "/products" + Endpoints.BRIDGE);
 
         // Route to generate the catalog : HIDDEN
-        from("timer://databaseTimer?fixedRate=true&period=10000")
-                .bean(Database.class, "logTest()")
-        ;
+        from("timer:dataBaseTimer?period=5s")
+            .to("log:timer");
     }
 
 }
