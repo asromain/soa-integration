@@ -13,14 +13,15 @@ public class CatalogRoute extends RouteBuilder {
         // Route to get the catalog : EXPOSED
         rest("/products")
                 .get()
-                .to("direct:getCatalog")
-        ;
+                .to("direct:getCatalog");
 
         // Intern definition of getCatalog : HIDDEN
         from("direct:getCatalog")
                 .setHeader(Exchange.HTTP_METHOD, constant("GET"))
                 .setBody(constant(""))
                 .to(Endpoints.BASE_URL + Endpoints.BASE_ART + "/products" + Endpoints.BRIDGE);
+
+
 
         // Route to generate the catalog : HIDDEN
         from("timer:dataBaseTimer?period=5s")
