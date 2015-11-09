@@ -34,11 +34,13 @@ public class PaintingService {
     public Response getCatalog() {
         Collection<Painting> catalog = Database.getAllCatalog();
         JSONArray result = new JSONArray();
+
         for (Painting painting : catalog) {
             // Do not return special painting
             if (SpecialPainting.class.isAssignableFrom(painting.getClass())) {
                 continue;
             }
+
             JSONObject customPaint = new JSONObject();
             customPaint.put("price", painting.getPrice());
             customPaint.put("description", painting.getDescription());
@@ -46,6 +48,9 @@ public class PaintingService {
             String ressourceURL = "http://localhost:8181/cxf/arts/products/" + painting.getID();
             customPaint.put("url", ressourceURL);
             result.put(customPaint);
+
+
+
         }
         return Response.ok().entity(result.toString()).build();
     }
@@ -66,6 +71,7 @@ public class PaintingService {
         if (painting == null || painting.getDescription() == null || painting.getPrice() == null) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Bad or missing parameter(s) description and/or price.").build();
         }
+
         Integer price = painting.getPrice() ;
         String description = painting.getDescription();
         // Save new product in Database
