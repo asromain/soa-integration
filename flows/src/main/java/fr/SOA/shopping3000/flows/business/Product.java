@@ -12,7 +12,7 @@ import java.util.Map;
  * specializedAttributes -> proprietes specifiques aux differentes boutiques
  */
 public class Product implements Serializable {
-    
+
     private String id;
     private String name;
     private String shop;

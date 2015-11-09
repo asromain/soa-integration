@@ -2,12 +2,18 @@ package fr.SOA.shopping3000.flows;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import fr.SOA.shopping3000.flows.business.Product;
 import fr.SOA.shopping3000.flows.utils.Database;
 import fr.SOA.shopping3000.flows.utils.Endpoints;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.JsonLibrary;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class CatalogRoute extends RouteBuilder {
     @Override
@@ -66,13 +72,12 @@ public class CatalogRoute extends RouteBuilder {
                 .log(LoggingLevel.INFO, "Translator boutique Shoes")
                         // Ici on fait quelque chose sur le body qui contient la reponse du GET de la boutique
                         // cad on transforme la reponse en une liste de Product business
-                .to("direct:addProductListToDatabase")
+//                .to("direct:addProductListToDatabase")
         ;
 
         from("direct:processArtsTranslation")
                 .log(LoggingLevel.INFO, "Translator boutique Arts")
-                        // Ici on fait quelque chose sur le body qui contient la reponse du GET de la boutique
-                        // cad on transforme la reponse en une liste de Product business
+                .process(processArtsTranslation)
                 .to("direct:addProductListToDatabase")
         ;
 
@@ -80,15 +85,15 @@ public class CatalogRoute extends RouteBuilder {
                 .log(LoggingLevel.INFO, "Translator boutique Shirt")
                         // Ici on fait quelque chose sur le body qui contient la reponse du GET de la boutique
                         // cad on transforme la reponse en une liste de Product business
-                .to("direct:addProductListToDatabase")
+//                .to("direct:addProductListToDatabase")
         ;
 
         // Ici on ajoute les reponses traitees ( liste de Product ) a la DB
         from("direct:addProductListToDatabase")
                 .log(LoggingLevel.INFO, "Ajout d'une liste de Product a la DB")
                 .split(body())
-//                .bean(Database.class, "addProduct(${body})")
-                .bean(Database.class, "TESTaddProduct()")
+                .bean(Database.class, "addProduct(${body})")
+//                .bean(Database.class, "TESTaddProduct()")
         ;
 
 
@@ -99,7 +104,6 @@ public class CatalogRoute extends RouteBuilder {
             .bean(Database.class,"getAllProducts()")
                 .marshal()
                 .json(JsonLibrary.Jackson);
-
         // endregion
 
         // region FOREGROUND DEFINITIONS
@@ -111,8 +115,59 @@ public class CatalogRoute extends RouteBuilder {
         rest("/products")
                 .get()
                 .to("direct:getCatalog");
-
-
         // endregion
     }
+
+
+    // ArtsInProvence Processor
+    private static Processor processArtsTranslation = new Processor() {
+
+        public void process(Exchange exchange) throws Exception {
+            ArrayList<Map<String, Object>> input = (ArrayList<Map<String,Object>>) exchange.getIn().getBody();
+            ArrayList<Product> output = translater(input);
+            exchange.getIn().setBody(output);
+        }
+
+        private ArrayList<Product> translater(ArrayList<Map<String, Object>> input) {
+            ArrayList<Product> output = new ArrayList<Product>();
+
+            for (Map map : input) {
+                String name = (String)map.get("description");
+                Double prix = (Double)map.get("price");
+                String shop = "Arts In Provence";
+                String id = (String)map.get("painting_id");
+
+                Product product = new Product(id, name, shop, prix);
+
+                output.add(product);
+            }
+            return output;
+        }
+
+       /* private Person builder(Map<String, Object> data) {
+            Person p = new Person();
+            // name
+            String name =  (String) data.get("Navn");
+            p.setFirstName((name.split(",")[1].trim()));
+            p.setLastName((name.split(",")[0].trim()));
+            // zip code
+            p.setZipCode(Integer.parseInt((String) data.get("Postnummer")));
+            // address
+            p.setAddress((String) data.get("Postaddressen"));
+            // email
+            p.setEmail((String) data.get("Epost"));
+            // Unique identifier
+            p.setUid((String) data.get("Fodselsnummer"));
+            // Money
+            p.setIncome(getMoneyValue(data, "Inntekt"));
+            p.setAssets(getMoneyValue(data, "Formue"));
+            return p;
+        }
+
+        private int getMoneyValue(Map<String, Object> data, String field) {
+            String rawIncome = (String) data.get(field);
+            return Integer.parseInt(rawIncome.replace(",", "").substring(0, rawIncome.length() - 3));
+        }*/
+    };
+
 }
