@@ -5,6 +5,7 @@ import fr.SOA.shopping3000.flows.business.Client;
 import fr.SOA.shopping3000.flows.business.Order;
 import fr.SOA.shopping3000.flows.business.Product;
 
+import java.io.Console;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -75,6 +76,10 @@ public final class Database {
             }
         }
 
+    }
+
+    static public void logTest() {
+        System.out.println("passe");
     }
 
 
