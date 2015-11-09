@@ -15,7 +15,17 @@ import java.util.Map;
 public final class Database {
     private static HashMap<String, Client> clients = new HashMap<String, Client>();
     private static HashMap<String, Order> orders = new HashMap<String, Order>();
-    private static HashMap<String, Product> products = new HashMap<String, Product>();
+    private static HashMap<String, Product> products = new HashMap<String, Product>(){
+        {
+            put("123",new Product("name1","123","155","customShoes"));
+            put("456",new Product("name2","456","985","artinprovence"));
+            put("789",new Product("name3","789","454","customShoes"));
+            put("147",new Product("name4","147","65","artinprovence"));
+            put("258",new Product("name5","258","12","customshirt"));
+            put("369",new Product("name6","369","30","customshirt"));
+        }
+    };
+
 
     // ID auto generee, incrementee dans les createX
     private static int productId = 0;
