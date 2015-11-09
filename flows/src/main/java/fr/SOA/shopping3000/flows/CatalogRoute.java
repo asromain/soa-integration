@@ -1,7 +1,5 @@
 package fr.SOA.shopping3000.flows;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import fr.SOA.shopping3000.flows.business.Product;
 import fr.SOA.shopping3000.flows.utils.Database;
 import fr.SOA.shopping3000.flows.utils.Endpoints;
@@ -12,19 +10,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.JsonLibrary;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class CatalogRoute extends RouteBuilder {
     @Override
     public void configure() throws Exception {
-        // Jackson ObjectMapper configuration
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-
-
-
         // region BACKGROUND DEFINITIONS
         // Scheduler to generate the catalog : HIDDEN
         from("timer:customTimer?period=30s")
