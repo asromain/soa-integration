@@ -17,20 +17,7 @@ import java.util.UUID;
 public final class Database {
     private static HashMap<String, Client> clients = new HashMap<String, Client>();
     private static HashMap<String, Order> orders = new HashMap<String, Order>();
-    private static HashMap<String, Product> products = new HashMap<String, Product>(){
-        {
-            put("123",new Product("name1","123","155","customShoes"));
-            put("456",new Product("name2","456","985","artinprovence"));
-            put("789",new Product("name3","789","454","customShoes"));
-            put("147",new Product("name4","147","65","artinprovence"));
-            put("258",new Product("name5","258","12","customshirt"));
-            put("369",new Product("name6","369","30","customshirt"));
-        }
-    };
-
-
-
-
+    private static HashMap<String, Product> products = new HashMap<String, Product>();
 
     static public void createOrder(String id, String idClient, String address) {
         Order currentOrder = new Order(id, idClient, address);
@@ -38,22 +25,13 @@ public final class Database {
 
     }
 
-<<<<<<< HEAD
     static public Collection<Product> getAllProducts(){
         return Database.products.values();
     }
 
-    //TODO implementer
-    static public void createOrder(){
-        Order curentOrder = new Order();
-        // UTILISER ORDERID POUR L'ID
-        //orders.put();
-        orderId++;
-=======
     static public void createClient(String id, String name, String address){
         Client curentCli = new Client(id,name,address);
         clients.put(id,curentCli);
->>>>>>> dev
     }
 
     static public void createProduct(String id, String name, String shop, double prix){
