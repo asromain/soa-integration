@@ -17,23 +17,35 @@ public final class Database {
     private static HashMap<String, Order> orders = new HashMap<String, Order>();
     private static HashMap<String, Product> products = new HashMap<String, Product>();
 
-
+    // ID auto generee, incrementee dans les createX
+    private static int productId = 0;
+    private static int orderId = 0;
+    private static int clientId = 0;
 
     static public void createClient(String id, String name, String address){
         Client curentCli = new Client(id,name,address);
-        clients.put(id,curentCli);
+        clients.put(String.valueOf(clientId),curentCli);
+        clientId++;
     }
 
     //TODO implementer
     static public void createOrder(){
         Order curentOrder = new Order();
+        // UTILISER ORDERID POUR L'ID
         //orders.put();
+        orderId++;
     }
 
     //TODO implementer
     static public void createProduct(String id, String name, String shop, String prix){
-        Product products = new Product(id, name, shop, prix);
-        //products.put();
+        Product currentProduct = new Product(id, name, shop, prix);
+        products.put(String.valueOf(productId), currentProduct);
+        productId++;
+    }
+
+    static public void addProduct(Product p) {
+        products.put(String.valueOf(productId), p);
+        productId++;
     }
 
     static public Client getClient(String id){
