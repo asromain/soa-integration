@@ -2,7 +2,6 @@ package fr.SOA.shopping3000.flows;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import fr.SOA.shopping3000.flows.business.Product;
 import fr.SOA.shopping3000.flows.utils.Database;
 import fr.SOA.shopping3000.flows.utils.Endpoints;
 import org.apache.camel.Exchange;
@@ -92,14 +91,14 @@ public class CatalogRoute extends RouteBuilder {
                 .bean(Database.class, "TESTaddProduct()")
         ;
 
+
+
         // Intern definition of getCatalog : HIDDEN
         from("direct:getCatalog")
-                .log(LoggingLevel.INFO, "Passe dans getCatalog.")
-                .setHeader(Exchange.HTTP_METHOD, constant("GET"))
-                .setBody(constant(""))
-                .to(Endpoints.BASE_URL + Endpoints.BASE_ART + "/products" + Endpoints.BRIDGE)
+            .log(LoggingLevel.INFO, "Passe dans getCatalog.")
+            .bean(Database.class,"getAllProducts()")
                 .marshal()
-                .json(JsonLibrary.Jackson, Product.class);
+                .json(JsonLibrary.Jackson);
 
         // endregion
 
@@ -116,5 +115,4 @@ public class CatalogRoute extends RouteBuilder {
 
         // endregion
     }
-
 }

@@ -12,18 +12,21 @@ import java.util.Map;
  * specializedAttributes -> proprietes specifiques aux differentes boutiques
  */
 public class Product implements Serializable {
-
-    private String name;
+    
     private String id;
-    private String prix;
+    private String name;
     private String shop;
+    private double price;
 
     private Map<String, String> specializedAttributes;
 
-    public Product(String name, String id, String prix, String shop) {
-        this.name = name;
+    public Product() {
+        this.specializedAttributes = new HashMap<String, String>();
+    }
+    public Product(String id, String name, String shop, double price) {
         this.id = id;
-        this.prix = prix;
+        this.name = name;
+        this.price = price;
         this.shop = shop;
         this.specializedAttributes = new HashMap<String, String>();
     }
@@ -36,12 +39,12 @@ public class Product implements Serializable {
         this.id = id;
     }
 
-    public String getPrix() {
-        return prix;
+    public String getName() {
+        return name;
     }
 
-    public void setPrix(String prix) {
-        this.prix = prix;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getShop() {
@@ -52,12 +55,28 @@ public class Product implements Serializable {
         this.shop = shop;
     }
 
-    public String getName() {
-        return name;
+    public double getPrice() {
+        return price;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setPrice(double price) {
+        this.price = price;
     }
 
+
+    public Map<String, String> getSpecializedAttributes() {
+        return specializedAttributes;
+    }
+
+    public String getSpecializedAttribute(String key) {
+        return specializedAttributes.get(key);
+    }
+
+    public void setSpecializedAttribute(String key, String value) {
+        this.specializedAttributes.put(key, value);
+    }
+
+    public String deleteSpecializedAttribute(String key) {
+        return specializedAttributes.remove(key);
+    }
 }
