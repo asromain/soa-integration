@@ -24,9 +24,9 @@ public class CatalogRoute extends RouteBuilder {
                         // Envoi requete GET sur les boutiques
                 .multicast()
                 .parallelProcessing()
-                .to("activdmq:getRequestShoes")
-                .to("activdmq:getRequestArts")
-                .to("activdmq:getRequestShirt")
+                .to("activemq:getRequestShoes")
+                .to("activemq:getRequestArts")
+                .to("activemq:getRequestShirt")
         ;
 
         // Ici les routes qui menent aux catalogues de nos boutiques
@@ -79,7 +79,8 @@ public class CatalogRoute extends RouteBuilder {
         from("direct:addProductListToDatabase")
                 .log(LoggingLevel.INFO, "Ajout d'une liste de Product a la DB")
                 .split(body())
-                .bean(Database.class, "addProduct(${body})")
+//                .bean(Database.class, "addProduct(${body})")
+                .bean(Database.class, "TESTaddProduct()")
         ;
 
         // Intern definition of getCatalog : HIDDEN

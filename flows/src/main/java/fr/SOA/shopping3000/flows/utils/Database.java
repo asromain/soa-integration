@@ -48,6 +48,10 @@ public final class Database {
         productId++;
     }
 
+    static public void TESTaddProduct() {
+        products.put("test", new Product("test", "test", "test", "test"));
+    }
+
     static public Client getClient(String id){
         for (Map.Entry<String, Client> entry : clients.entrySet()){
             if (id.equals(entry.getKey())){
