@@ -15,6 +15,7 @@
     <!-- Version for dependencies (Camel + JUnit) -->
     <junit.version>4.12</junit.version>
     <camel.version>2.15.2</camel.version>
+    <jackson.version>2.6.1</jackson.version>
     <!-- OSGI bundle information (needed to deploy on ServiceMix) -->
     <bundle.symbolicName>${project.artifactId}</bundle.symbolicName>
     <bundle.namespace>fr.SOA.shopping3000</bundle.namespace>
@@ -44,6 +45,23 @@
       <artifactId>camel-spring-ws</artifactId>
       <version>${camel.version}</version>
     </dependency>
+      <dependency>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-databind</artifactId>
+          <version>${jackson.version}</version>
+      </dependency>
+      <dependency>
+          <!-- Note: core-annotations version x.y.0 is generally compatible with
+               (identical to) version x.y.1, x.y.2, etc. -->
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-annotations</artifactId>
+          <version>${jackson.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-core</artifactId>
+          <version>${jackson.version}</version>
+      </dependency>
   </dependencies>
 
   <build>
@@ -69,6 +87,11 @@
             <Bundle-Version>${project.version}</Bundle-Version>
             <Import-Package>*</Import-Package>
             <Export-Package>${bundle.namespace}.flows.*;version="${project.version}"</Export-Package>
+              <Embed-Dependency>
+                  jackson-annotations;scope=compile,
+                  jackson-databind;scope=compile,
+                  jackson-core;scope=compile
+              </Embed-Dependency>
           </instructions>
         </configuration>
       </plugin>

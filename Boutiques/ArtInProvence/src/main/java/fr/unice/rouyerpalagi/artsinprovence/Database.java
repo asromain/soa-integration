@@ -1,7 +1,5 @@
 package fr.unice.rouyerpalagi.artsinprovence;
-import org.json.JSONObject;
 
-import java.io.InputStream;
 import java.util.*;
 
 /**
@@ -18,7 +16,13 @@ public class Database {
     /**
      * HashMap of arts produce, stored by id
      */
-    private static HashMap<String, Painting> catalog = new HashMap<String, Painting>();
+    private static HashMap<String, Painting> catalog = new HashMap<String, Painting>(){
+        {
+            { put(UUID.randomUUID().toString(),new Painting("description1",158));}
+            { put(UUID.randomUUID().toString(),new Painting("description2",150));}
+            { put(UUID.randomUUID().toString(),new Painting("description3",915));}
+        }
+    };
 
     /**
      * HashMap of the orders, stored by id
@@ -134,7 +138,7 @@ public class Database {
     /**
      *
      * @param lastName Nom du client
-     * @param firstName Prénom du client
+     * @param firstName Prï¿½nom du client
      * @param address Adresse de facturation du client
      * @param mail Adresse mail du client
      */
@@ -146,9 +150,9 @@ public class Database {
 
     /**
      *
-     * @param cli objet Client qui va permettre son accès pour le modifier
+     * @param cli objet Client qui va permettre son accï¿½s pour le modifier
      * @param lastName nouveau nom
-     * @param firstName nouveau prénom
+     * @param firstName nouveau prï¿½nom
      * @param address nouvelle adresse de facturation
      * @param mail nouvelle adresse mail
      */
@@ -165,7 +169,7 @@ public class Database {
 
     /**
      *
-     * @param id identifiant du client à supprimer
+     * @param id identifiant du client ï¿½ supprimer
      */
     public static void deleteClient(String id){
         for(Map.Entry<String, Client> entry : clients.entrySet()){
@@ -203,7 +207,7 @@ public class Database {
     /**
      *
      * @param mail adresse mail du client dont on veut avoir son objet
-     * @return retourne l'objet correspondant à l'adresse mail sinon null
+     * @return retourne l'objet correspondant ï¿½ l'adresse mail sinon null
      */
     public static Client getClientByMail(String mail){
         for(Map.Entry<String, Client> entry : clients.entrySet()){
