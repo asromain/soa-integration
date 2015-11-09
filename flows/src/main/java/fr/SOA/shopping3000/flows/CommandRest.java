@@ -10,7 +10,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Exchange;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -73,8 +75,15 @@ public class CommandRest extends RouteBuilder {
             String orderClientId = (String) exchange.getIn().getHeader("client_id");
             String orderAddress = (String) exchange.getIn().getHeader("command_address");
 
+            Product p1 = new Product(Database.genUID(), "durex", "boutique 1", 234);
+            Product p2 = new Product(Database.genUID(), "plax", "boutique 2", 84);
+            p1.setSpecializedAttribute("type", "col v");
+            p2.setSpecializedAttribute("color", "bleu");
+
             //fill database
             Database.createOrder(orderId, orderClientId, orderAddress);
+            Database.getOrder(orderId).addProduct(p1.getId(), p1);
+            Database.getOrder(orderId).addProduct(p2.getId(), p2);
 
             exchange.getIn().setBody(orderId);
         }
@@ -116,7 +125,48 @@ public class CommandRest extends RouteBuilder {
         }
 
         private String buildCSV(Order order) {
-            return order.toCSV();
+            List<String> headers = new ArrayList<String>();
+            List<List<String>> products = new ArrayList<List<String>>();
+            // can be smarter
+            headers.add("order_id");
+            headers.add("order_address");
+            headers.add("order_totprice");
+            // can be smarter
+            headers.add("product_id");
+            headers.add("name");
+            headers.add("shop");
+            headers.add("price");
+
+            int cptBlank = 0;
+
+            for (Product curP : order.getProducts().values()) {
+                List<String> tmpVarValues = new ArrayList<String>();
+                tmpVarValues.add(order.getId());
+                tmpVarValues.add(order.getAddress());
+                tmpVarValues.add(String.valueOf(order.getTotPrice()));
+
+                tmpVarValues.add(curP.getId());
+                tmpVarValues.add(curP.getName());
+                tmpVarValues.add(curP.getShop());
+                tmpVarValues.add(String.valueOf(curP.getPrice()));
+
+                for (int i = 0; i < cptBlank; i++) {
+                    tmpVarValues.add("");
+                }
+                for (Map.Entry<String, String> speAtt : curP.getSpecializedAttributes().entrySet()) {
+                    headers.add(speAtt.getKey());
+                    tmpVarValues.add(speAtt.getValue());
+                    cptBlank++;
+                }
+                products.add(tmpVarValues);
+            }
+            String csvHeader = String.join(",", headers);
+            String csvProducts = "";
+            for (List<String> p : products) {
+                csvProducts += "\n"+String.join(",", p);
+            }
+
+            return csvHeader+csvProducts;
         }
 
 

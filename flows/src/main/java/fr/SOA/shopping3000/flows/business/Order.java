@@ -67,6 +67,10 @@ public class Order implements Serializable {
         return products.get(id);
     }
 
+    public Map<String, Product> getProducts() {
+        return products;
+    }
+
     public void addProduct(String id, Product product) {
         this.totPrice += product.getPrice();
         this.products.put(id, product);
@@ -87,38 +91,6 @@ public class Order implements Serializable {
     }
 
 
-    public String toCSV() {
-        List<String> headers = new ArrayList<String>();
-        List<List<String>> products = new ArrayList<List<String>>();
-        // can be smarter
-        headers.add("order_id");
-        headers.add("order_address");
-        headers.add("order_totprice");
 
-        int cptBlank = 0;
-
-        for (Product curP : this.products.values()) {
-            List<String> tmpVarValues = new ArrayList<String>();
-            tmpVarValues.add(this.id);
-            tmpVarValues.add(this.address);
-            tmpVarValues.add(String.valueOf(this.totPrice));
-            for (int i = 0; i < cptBlank; i++) {
-                tmpVarValues.add("");
-            }
-            for (Map.Entry<String, String> speAtt : curP.getSpecializedAttributes().entrySet()) {
-                headers.add(speAtt.getKey());
-                tmpVarValues.add(speAtt.getValue());
-                cptBlank++;
-            }
-            products.add(tmpVarValues);
-        }
-        String csvHeader = String.join(",", headers);
-        String csvProducts = "";
-        for (List<String> p : products) {
-            csvProducts += "\n"+String.join(",", p);
-        }
-
-        return csvHeader+csvProducts;
-    }
 
 }

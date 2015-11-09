@@ -68,6 +68,7 @@ public class Product implements Serializable {
     public Map<String, String> getSpecializedAttributes() {
         return specializedAttributes;
     }
+
     public String getSpecializedAttribute(String key) {
         return specializedAttributes.get(key);
     }
