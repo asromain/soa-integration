@@ -13,7 +13,6 @@ import java.util.Map;
  */
 public class Product implements Serializable {
 
-
     private String name;
     private String id;
     private String prix;
