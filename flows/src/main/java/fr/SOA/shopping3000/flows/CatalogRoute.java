@@ -12,6 +12,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.JsonLibrary;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -77,6 +78,8 @@ public class CatalogRoute extends RouteBuilder {
 
         from("direct:processArtsTranslation")
                 .log(LoggingLevel.INFO, "Translator boutique Arts")
+                .unmarshal()
+                .json(JsonLibrary.Jackson, ArrayList.class)
                 .process(processArtsTranslation)
                 .to("direct:addProductListToDatabase")
         ;
@@ -133,11 +136,16 @@ public class CatalogRoute extends RouteBuilder {
 
             for (Map map : input) {
                 String name = (String)map.get("description");
-                Double prix = (Double)map.get("price");
+                Double prix = Double.valueOf(map.get("price").toString());
                 String shop = "Arts In Provence";
-                String id = (String)map.get("painting_id");
+                String url = (String)map.get("url");
+                int indexLastSlash = url.lastIndexOf("/");
+                String id = url.substring(indexLastSlash + 1);
 
                 Product product = new Product(id, name, shop, prix);
+                // Champs supplémentaires
+                product.setSpecializedAttribute("url", url);
+                product.setSpecializedAttribute("available", ((Boolean)map.get("available")).toString());
 
                 output.add(product);
             }
