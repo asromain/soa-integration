@@ -9,7 +9,7 @@
   <artifactId>maul-intergration</artifactId>
   <version>1.0</version>
   <packaging>bundle</packaging>
-  <name>SOA1 :: Integration Flows with Apache Camel</name>
+  <name>Shopping 3000 : Integration</name>
 
   <properties>
     <!-- Version for dependencies (Camel + JUnit) -->
