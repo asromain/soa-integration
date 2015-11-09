@@ -3,6 +3,7 @@ package fr.SOA.shopping3000.flows;
 import static fr.SOA.shopping3000.flows.utils.Endpoints.*;
 
 import fr.SOA.shopping3000.flows.business.Product;
+import fr.SOA.shopping3000.flows.utils.OrderWriterJson;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -33,9 +34,9 @@ public class HandleCsvFile extends RouteBuilder {
                 .aggregate(constant(true), batchAggregationStrategy())
                 .completionPredicate(batchSizePredicate())
                 .completionTimeout(BATCH_TIME_OUT)
+                .bean(OrderWriterJson.class, "writeJson(${body})")
                 .to(CSV_OUTPUT_DIRECTORY + "?fileName=output.txt")
         ;
-
                 //.to(HANDLE_ITEM);   // Async transfer with JMS ( activemq:... )
                 //.setBody(simple("Hello world !"));
     }

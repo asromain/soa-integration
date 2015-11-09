@@ -1,10 +1,5 @@
 package fr.SOA.shopping3000.flows;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
@@ -17,7 +12,7 @@ public class ArrayListAggregationStrategy implements AggregationStrategy {
 
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
 
-        //TODO BUILD COMMAND INTEAD OF STRING
+        //TODO BUILD ORDER INTEAD OF STRING
         Message newIn = newExchange.getIn();
         Object newBody = newIn.getBody();
         //Map<String, Object> map = null;
