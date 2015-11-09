@@ -2,9 +2,11 @@ package fr.SOA.shopping3000.flows;
 
 import fr.SOA.shopping3000.flows.utils.Database;
 import fr.SOA.shopping3000.flows.utils.Endpoints;
+import jdk.nashorn.api.scripting.JSObject;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.dataformat.JsonLibrary;
 
 public class CatalogRoute extends RouteBuilder {
     @Override
@@ -83,12 +85,14 @@ public class CatalogRoute extends RouteBuilder {
                 .bean(Database.class, "TESTaddProduct()")
         ;
 
+
+
         // Intern definition of getCatalog : HIDDEN
         from("direct:getCatalog")
-                .log(LoggingLevel.INFO, "Passe dans getCatalog.")
-                .setHeader(Exchange.HTTP_METHOD, constant("GET"))
-                .setBody(constant(""))
-                .to(Endpoints.BASE_URL + Endpoints.BASE_ART + "/products" + Endpoints.BRIDGE);
+            .log(LoggingLevel.INFO, "Passe dans getCatalog.")
+            .bean(Database.class,"getAllProducts()")
+                .marshal()
+                .json(JsonLibrary.Jackson);
 
         // endregion
 
@@ -105,5 +109,4 @@ public class CatalogRoute extends RouteBuilder {
 
         // endregion
     }
-
 }

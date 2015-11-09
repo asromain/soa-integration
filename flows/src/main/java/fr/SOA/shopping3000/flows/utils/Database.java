@@ -6,6 +6,7 @@ import fr.SOA.shopping3000.flows.business.Order;
 import fr.SOA.shopping3000.flows.business.Product;
 
 import java.io.Console;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,6 +37,10 @@ public final class Database {
         Client curentCli = new Client(id,name,address);
         clients.put(String.valueOf(clientId),curentCli);
         clientId++;
+    }
+
+    static public Collection<Product> getAllProducts(){
+        return Database.products.values();
     }
 
     //TODO implementer
