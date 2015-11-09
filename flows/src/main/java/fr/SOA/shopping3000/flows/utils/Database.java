@@ -20,20 +20,29 @@ public final class Database {
 
 
 
-    static public void createClient(String id, String name, String address) {
-        Client currentCli = new Client(id,name,address);
-        clients.put(id,currentCli);
-    }
 
     static public void createOrder(String id, String idClient, String address) {
         Order currentOrder = new Order(id, idClient, address);
         orders.put(id, currentOrder);
+
     }
 
-    //TODO implementer
-    static public void createProduct(String id, String name, String shop, double prix) {
-        Product products = new Product(id, name, shop, prix);
-        //products.put();
+    static public void createClient(String id, String name, String address){
+        Client curentCli = new Client(id,name,address);
+        clients.put(id,curentCli);
+    }
+
+    static public void createProduct(String id, String name, String shop, double prix){
+        Product currentProduct = new Product(id, name, shop, prix);
+        products.put(id, currentProduct);
+    }
+
+    static public void addProduct(Product p) {
+        products.put(p.getId(), p);
+    }
+
+    static public void TESTaddProduct() {
+        products.put("test", new Product("test", "test", "test", 2345));
     }
 
     static public Client getClient(String id){

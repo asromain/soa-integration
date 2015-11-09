@@ -99,7 +99,7 @@ public class CommandRest extends RouteBuilder {
 
             Product currentProduct = Database.getProduct(prodId);
             Order currentOrder = Database.getOrder(commandId);
-            // TODO à verifier si le changement se fait dans la base de donnée
+            // TODO Ã  verifier si le changement se fait dans la base de donnÃ©e
             currentOrder.addProduct(currentProduct.getId(), currentProduct);
 
             exchange.getIn().setBody("done");
