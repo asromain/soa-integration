@@ -1,6 +1,7 @@
 package fr.SOA.shopping3000.flows;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
@@ -25,7 +26,9 @@ public class CustomRoute extends RouteBuilder {
         from("direct:getCustomParameters")
                 .multicast()
                 .parallelProcessing()
-                .to("activemq:getCustomShoes", "activemq:getCustomShirt", "activemq:getCustomArt")
+                .to("activemq:getCustomShoes")
+                .to("activemq:getCustomShirt")
+                .to("activemq:getCustomArt")
                 .aggregationStrategy(strat)
                 .marshal()
                 .json(JsonLibrary.Jackson)
@@ -34,16 +37,19 @@ public class CustomRoute extends RouteBuilder {
         from("activemq:getCustomShoes")
         // TODO renvoyer ArrayList<HashMap<String, ArrayList>> qui represente les parametres de personalisation
         // ex : [ { "Couleur" : [ "jaune", "rouge", ... ] } , { "Taille" : [ "S", "M", ... ] } ]
+                .log(LoggingLevel.INFO, "Get custom parameters Shoes")
         ;
 
         from("activemq:getCustomShirt")
         // TODO renvoyer ArrayList<HashMap<String, ArrayList>> qui represente les parametres de personalisation
         // ex : [ { "Couleur" : [ "jaune", "rouge", ... ] } , { "Taille" : [ "S", "M", ... ] } ]
+                .log(LoggingLevel.INFO, "Get custom parameters Shirt")
         ;
 
         from("activemq:getCustomArt")
         // TODO renvoyer ArrayList<HashMap<String, ArrayList>> qui represente les parametres de personalisation
         // ex : [ { "Couleur" : [ "jaune", "rouge", ... ] } , { "Taille" : [ "S", "M", ... ] } ]
+                .log(LoggingLevel.INFO, "Get custom parameters Arts")
         ;
 
     }
