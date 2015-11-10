@@ -9,7 +9,7 @@ public class Symbol {
 	public Symbol() {
 		super();
 		map.put(1, "cercle");
-		map.put(2, "carré");
+		map.put(2, "carrï¿½");
 		map.put(3, "rond");
 		map.put(4, "triangle");
 		map.put(5, "logo");
