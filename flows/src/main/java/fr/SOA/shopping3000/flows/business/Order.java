@@ -72,11 +72,6 @@ public class Order implements Serializable {
         return productIds;
     }
 
-    // obsolete
-    public void addProduct(String id, Product product) {
-        this.totPrice += product.getPrice();
-        this.productIds.put(id, null);
-    }
     public void addProduct(String id, Map<String, String> persos) {
         this.totPrice += Database.getProduct(id).getPrice();
         this.productIds.put(id, persos);

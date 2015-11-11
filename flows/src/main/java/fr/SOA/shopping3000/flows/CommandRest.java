@@ -78,15 +78,8 @@ public class CommandRest extends RouteBuilder {
             String orderClientId = (String) exchange.getIn().getHeader("client_id");
             String orderAddress = (String) exchange.getIn().getHeader("command_address");
 
-            Product p1 = new Product(Database.genUID(), "durex", "boutique 1", 234);
-            Product p2 = new Product(Database.genUID(), "plax", "boutique 2", 84);
-            p1.setSpecializedAttribute("type", "col v");
-            p2.setSpecializedAttribute("color", "bleu");
-
             //fill database
             Database.createOrder(orderId, orderClientId, orderAddress);
-            Database.getOrder(orderId).addProduct(p1.getId(), p1);
-            Database.getOrder(orderId).addProduct(p2.getId(), p2);
 
             exchange.getIn().setBody(orderId);
         }
@@ -102,11 +95,20 @@ public class CommandRest extends RouteBuilder {
 
             Product currentProduct = Database.getProduct(prodId);
             Order currentOrder = Database.getOrder(commandId);
-            // TODO à verifier si le changement se fait dans la base de donnée
+
+            if (currentProduct == null) {
+                exchange.getIn().setBody("Product not in Database" + prodId);
+                return;
+            }
+            if (currentOrder == null) {
+                exchange.getIn().setBody("Order not in Database"+ commandId);
+                return;
+            }
+
             Map<String, String> persos = new HashMap<String, String>();
             for (Map.Entry<String, List<String>> perso : currentProduct.getPersonalisations().entrySet()) {
                 String persoVal = (String) exchange.getIn().getHeader(perso.getKey());
-                if (!persoVal.equals(null) && perso.getValue().contains(persoVal)) {
+                if (persoVal != null && perso.getValue().contains(persoVal)) {
                     persos.put(perso.getKey(), persoVal);
                 }
                 else {
@@ -133,6 +135,11 @@ public class CommandRest extends RouteBuilder {
             //get order from database
             Order order = Database.getOrder(commandId);
 
+            if (order == null) {
+                exchange.getIn().setBody("Order not in Database" + commandId);
+                return;
+            }
+
             String csvContent = buildCSV(order);
 
             exchange.getIn().setBody(csvContent);
@@ -141,35 +148,25 @@ public class CommandRest extends RouteBuilder {
         private String buildCSV(Order order) {
             List<String> headers = new ArrayList<String>();
             List<List<String>> products = new ArrayList<List<String>>();
-            // can be smarter
+
             headers.add("order_id");
             headers.add("order_address");
-            //headers.add("order_totprice");
-            // can be smarter
             headers.add("product_id");
-            //headers.add("name");
-            //headers.add("shop");
-            //headers.add("price");
 
             int cptBlank = 0;
 
             for (String curProdId : order.getProductIds().keySet()) {
-                //Product curP = Database.getProduct(curProdId);
+
                 List<String> tmpVarValues = new ArrayList<String>();
                 tmpVarValues.add(order.getId());
                 tmpVarValues.add(order.getAddress());
-                //tmpVarValues.add(String.valueOf(order.getTotPrice()));
-
                 tmpVarValues.add(curProdId);
-                //tmpVarValues.add(curP.getName());
-                //tmpVarValues.add(curP.getShop());
-                //tmpVarValues.add(String.valueOf(curP.getPrice()));
 
                 for (int i = 0; i < cptBlank; i++) {
                     tmpVarValues.add("");
                 }
                 for (Map<String, String> persos : order.getProductIds().values()) {
-                    if (!persos.equals(null)) {
+                    if (persos != null) {
                         for (Map.Entry<String, String> perso : persos.entrySet()) {
                             headers.add(perso.getKey());
                             tmpVarValues.add(perso.getValue());
@@ -179,6 +176,7 @@ public class CommandRest extends RouteBuilder {
                 }
                 products.add(tmpVarValues);
             }
+
             String csvHeader = String.join(",", headers);
             String csvProducts = "";
             for (List<String> p : products) {
