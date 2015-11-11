@@ -42,11 +42,9 @@ public class HandleCsvFile extends RouteBuilder {
                 .completionPredicate(batchSizePredicate())
                 .completionTimeout(BATCH_TIME_OUT)
                 //.setProperty("order", newOrder)
-                .bean(OrderWriterJson.class, "writeJson(${body})")
+                //.bean(OrderWriterJson.class, "writeJson(${body})")
                 .to(CSV_OUTPUT_DIRECTORY + "?fileName=output.txt")
         ;
-                //.to(HANDLE_ITEM);   // Async transfer with JMS ( activemq:... )
-                //.setBody(simple("Hello world !"));
     }
 
     private AggregationStrategy batchAggregationStrategy(Order newOrder) {
@@ -107,7 +105,7 @@ public class HandleCsvFile extends RouteBuilder {
                     String shop = (String) currentEntry.getValue();
                     p.setShop(shop);
                 } else if(currentEntry.getKey().equals("price")){
-                    p.setPrice((Double) currentEntry.getValue());
+                    p.setPrice(Double.parseDouble((String)currentEntry.getValue()));
                 } else if(currentEntry.getKey().equals("name")){
                     p.setName((String) currentEntry.getValue());
                 } else {
