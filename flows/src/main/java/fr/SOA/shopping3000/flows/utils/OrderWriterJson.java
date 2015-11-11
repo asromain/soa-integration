@@ -8,9 +8,10 @@ import fr.SOA.shopping3000.flows.business.Order;
 public class OrderWriterJson {
     public String writeJson(Order order) {
         StringBuilder b = new StringBuilder();
-        /*b.append("  id: " + product.getId() + "\n");
-        b.append("  name: " + product.getName() + "\n");
-        b.append("  price: " + product.getPrice() + "\n");*/
+        //b.append("  id: " + order.getId() + "\n");
+        //b.append("  name: " + order.getIdClient() + "\n");
+        //b.append("  price: " + order.getTotPrice() + "\n");
+        //b.append(price);
         return b.toString();
     }
 }
