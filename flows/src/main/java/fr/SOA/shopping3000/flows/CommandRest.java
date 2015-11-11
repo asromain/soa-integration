@@ -11,6 +11,7 @@ import org.apache.camel.Exchange;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,6 +45,7 @@ public class CommandRest extends RouteBuilder {
                 .to("direct:commandValid")
         ;
 
+
         /*
          * FROM
          */
@@ -64,6 +66,7 @@ public class CommandRest extends RouteBuilder {
                 .log("drop csv in the command file")
                 .to(CSV_INPUT_DIRECTORY + "?fileName=${header.command_id}.csv")
         ;
+
     }
 
 
@@ -100,7 +103,18 @@ public class CommandRest extends RouteBuilder {
             Product currentProduct = Database.getProduct(prodId);
             Order currentOrder = Database.getOrder(commandId);
             // TODO à verifier si le changement se fait dans la base de donnée
-            currentOrder.addProduct(currentProduct.getId(), currentProduct);
+            Map<String, String> persos = new HashMap<String, String>();
+            for (Map.Entry<String, List<String>> perso : currentProduct.getPersonalisations().entrySet()) {
+                String persoVal = (String) exchange.getIn().getHeader(perso.getKey());
+                if (!persoVal.equals(null) && perso.getValue().contains(persoVal)) {
+                    persos.put(perso.getKey(), persoVal);
+                }
+                else {
+                    exchange.getIn().setBody("error on personnalisation"+ perso.getKey());
+                    return;
+                }
+            }
+            currentOrder.addProduct(prodId, persos);
 
             exchange.getIn().setBody("done");
         }
@@ -130,33 +144,38 @@ public class CommandRest extends RouteBuilder {
             // can be smarter
             headers.add("order_id");
             headers.add("order_address");
-            headers.add("order_totprice");
+            //headers.add("order_totprice");
             // can be smarter
             headers.add("product_id");
-            headers.add("name");
-            headers.add("shop");
-            headers.add("price");
+            //headers.add("name");
+            //headers.add("shop");
+            //headers.add("price");
 
             int cptBlank = 0;
 
-            for (Product curP : order.getProducts().values()) {
+            for (String curProdId : order.getProductIds().keySet()) {
+                //Product curP = Database.getProduct(curProdId);
                 List<String> tmpVarValues = new ArrayList<String>();
                 tmpVarValues.add(order.getId());
                 tmpVarValues.add(order.getAddress());
-                tmpVarValues.add(String.valueOf(order.getTotPrice()));
+                //tmpVarValues.add(String.valueOf(order.getTotPrice()));
 
-                tmpVarValues.add(curP.getId());
-                tmpVarValues.add(curP.getName());
-                tmpVarValues.add(curP.getShop());
-                tmpVarValues.add(String.valueOf(curP.getPrice()));
+                tmpVarValues.add(curProdId);
+                //tmpVarValues.add(curP.getName());
+                //tmpVarValues.add(curP.getShop());
+                //tmpVarValues.add(String.valueOf(curP.getPrice()));
 
                 for (int i = 0; i < cptBlank; i++) {
                     tmpVarValues.add("");
                 }
-                for (Map.Entry<String, String> speAtt : curP.getSpecializedAttributes().entrySet()) {
-                    headers.add(speAtt.getKey());
-                    tmpVarValues.add(speAtt.getValue());
-                    cptBlank++;
+                for (Map<String, String> persos : order.getProductIds().values()) {
+                    if (!persos.equals(null)) {
+                        for (Map.Entry<String, String> perso : persos.entrySet()) {
+                            headers.add(perso.getKey());
+                            tmpVarValues.add(perso.getValue());
+                            cptBlank++;
+                        }
+                    }
                 }
                 products.add(tmpVarValues);
             }

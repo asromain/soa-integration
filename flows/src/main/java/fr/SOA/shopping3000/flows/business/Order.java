@@ -1,5 +1,7 @@
 package fr.SOA.shopping3000.flows.business;
 
+import fr.SOA.shopping3000.flows.utils.Database;
+
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -18,10 +20,12 @@ public class Order implements Serializable {
     private String address;
     private double totPrice;
 
-    private Map<String, Product> products;
+    //private List<String> productIds;
+
+    private Map<String, Map<String, String>> productIds;
 
     public Order() {
-        this.products = new HashMap<String, Product>();
+        this.productIds = new HashMap<String, Map<String, String>>();
     }
 
     public Order(String id, String idClient, String address) {
@@ -29,7 +33,7 @@ public class Order implements Serializable {
         this.idClient = idClient;
         this.address = address;
         this.totPrice = 0;
-        this.products = new HashMap<String, Product>();
+        this.productIds = new HashMap<String, Map<String, String>>();
     }
 
     public String getId() {
@@ -47,6 +51,7 @@ public class Order implements Serializable {
     public void setIdClient(String idClient) {
         this.idClient = idClient;
     }
+
     public String getAddress() {
         return address;
     }
@@ -63,29 +68,30 @@ public class Order implements Serializable {
         this.totPrice = totPrice;
     }
 
-    public Product getProduct(String id) {
-        return products.get(id);
+    public Map<String, Map<String, String>> getProductIds() {
+        return productIds;
     }
 
-    public Map<String, Product> getProducts() {
-        return products;
-    }
-
+    // obsolete
     public void addProduct(String id, Product product) {
         this.totPrice += product.getPrice();
-        this.products.put(id, product);
+        this.productIds.put(id, null);
+    }
+    public void addProduct(String id, Map<String, String> persos) {
+        this.totPrice += Database.getProduct(id).getPrice();
+        this.productIds.put(id, persos);
     }
 
-    public Product deleteProduct(String id) {
-        Product curr = products.get(id);
+    public void deleteProduct(String id) {
+        Product curr = Database.getProduct(id);
         this.totPrice -= curr.getPrice();
-        return products.remove(id);
+        productIds.remove(id);
     }
 
     public double calculateTotPrice() {
         this.totPrice = 0;
-        for (Product curP : this.products.values()) {
-            this.totPrice += curP.getPrice();
+        for (String curProdId : this.productIds.keySet()) {
+            this.totPrice += Database.getProduct(curProdId).getPrice();
         }
         return this.totPrice;
     }
