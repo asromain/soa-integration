@@ -11,10 +11,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.JsonLibrary;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CatalogRoute extends RouteBuilder {
     @Override
@@ -41,7 +38,9 @@ public class CatalogRoute extends RouteBuilder {
                 .parallelProcessing()
                 .to("activemq:getRequestShoes")
                 .to("activemq:getRequestArts")
-                .to("activemq:getRequestShirt")
+                .to("activemq:getRequestShirtcolors")
+                .to("activemq:getRequestShirttypes")
+                .to("activemq:getRequestShirtsymbols")
         ;
 
         // Ici les routes qui menent aux catalogues de nos boutiques
@@ -60,9 +59,21 @@ public class CatalogRoute extends RouteBuilder {
                 .to("direct:processArtsTranslation")
         ;
 
-        from("activemq:getRequestShirt")
-                .log(LoggingLevel.INFO, "Envoi du GET a CustomShirt")
-//                .to(Endpoints.BASE_URL + Endpoints.BASE_SHIRT + "/products" + Endpoints.BRIDGE)
+        from("activemq:getRequestShirtcolors")
+                .log(LoggingLevel.INFO, "Envoi du GET a CustomShirt colors")
+                .to(Endpoints.BASE_URL + Endpoints.BASE_SHIRT + "/catalog/colors" + Endpoints.BRIDGE)
+                        // On redirige la reponse de la boutique vers SON translator
+                .to("direct:processShirtTranslation")
+        ;
+        from("activemq:getRequestShirttypes")
+                .log(LoggingLevel.INFO, "Envoi du GET a CustomShirt types")
+                .to(Endpoints.BASE_URL + Endpoints.BASE_SHIRT + "/catalog/types" + Endpoints.BRIDGE)
+                        // On redirige la reponse de la boutique vers SON translator
+                .to("direct:processShirtTranslation")
+        ;
+        from("activemq:getRequestShirtsymbols")
+                .log(LoggingLevel.INFO, "Envoi du GET a CustomShirt symbols")
+                .to(Endpoints.BASE_URL + Endpoints.BASE_SHIRT + "/catalog/symbols" + Endpoints.BRIDGE)
                         // On redirige la reponse de la boutique vers SON translator
                 .to("direct:processShirtTranslation")
         ;
@@ -86,9 +97,9 @@ public class CatalogRoute extends RouteBuilder {
 
         from("direct:processShirtTranslation")
                 .log(LoggingLevel.INFO, "Translator boutique Shirt")
-                        // Ici on fait quelque chose sur le body qui contient la reponse du GET de la boutique
-                        // cad on transforme la reponse en une liste de Product business
-//                .to("direct:addProductListToDatabase")
+                .unmarshal().json(JsonLibrary.Jackson)
+                .process(shirtTranslation)
+                .to("direct:addProductListToDatabase")
         ;
 
         // Ici on ajoute les reponses traitees ( liste de Product ) a la DB
@@ -152,6 +163,7 @@ public class CatalogRoute extends RouteBuilder {
             return output;
         }
 
+
        /* private Person builder(Map<String, Object> data) {
             Person p = new Person();
             // name
@@ -176,6 +188,49 @@ public class CatalogRoute extends RouteBuilder {
             String rawIncome = (String) data.get(field);
             return Integer.parseInt(rawIncome.replace(",", "").substring(0, rawIncome.length() - 3));
         }*/
+    };
+
+    // CustomShirt Processor
+    private static Processor shirtTranslation = new Processor() {
+
+        public void process(Exchange exchange) throws Exception {
+            HashMap<String, ArrayList<HashMap<String, String>>> input = (HashMap<String, ArrayList<HashMap<String, String>>>) exchange.getIn().getBody();
+
+            ArrayList<Product> output = translater(input);
+            exchange.getIn().setBody(output);
+        }
+
+        private ArrayList<Product> translater(HashMap<String, ArrayList<HashMap<String, String>>> input) {
+            ArrayList<Product> output = new ArrayList<Product>();
+            Map<String, List<String>> persos = new HashMap<String, List<String>>();
+
+            Product product = Database.getProduct("customshirt-1");
+
+            if (product == null) {
+
+                String id = "customshirt-1";
+                String name = "Tshirt Personnalisable";
+                Double prix = (double) 101;
+                String shop = "customshirt";
+
+                product = new Product(id, name, shop, prix);
+            }
+            ArrayList<String> persosForCatalog = new ArrayList<String>();
+            for (HashMap.Entry<String, ArrayList<HashMap<String, String>>> entry : input.entrySet()) {
+                for (String lhm : entry.getValue().get(0).values()) {
+                    persosForCatalog.add(lhm);
+                }
+                // c'est un hashmap donc ca remplace l'ancien si deja existant
+                product.setPersonalisation(entry.getKey(), persosForCatalog);
+            }
+
+            //product.setPersonalisation("color", persosForCatalog);
+
+
+            output.add(product);
+            return output;
+        }
+
     };
 
 }
