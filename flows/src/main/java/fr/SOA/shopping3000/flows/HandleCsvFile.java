@@ -18,7 +18,7 @@ import org.apache.camel.Predicate;
 public class HandleCsvFile extends RouteBuilder {
     private static final long BATCH_TIME_OUT = 3000L;
     private static final int MAX_RECORDS = 900;
-    private static Order newOrder = null;
+    private static Order newOrder = new Order();
     @Override
     public void configure() throws Exception {
 
@@ -27,7 +27,7 @@ public class HandleCsvFile extends RouteBuilder {
                 .log("  Loading the file as a CSV document")
                 .unmarshal(buildCsvFormat())// Body is now a List(Map("navn" -> ..., ...), ...)
                 .log("Create new order")
-                .process(newOrderCreation)
+                //.process(newOrderCreation)
                 .log("  Splitting the content of the file into atomic lines")
                 .split(body())
                 .log("  Transforming a CSV line into a Person")
@@ -37,12 +37,13 @@ public class HandleCsvFile extends RouteBuilder {
                 .to(HANDLE_ITEM)
                 //process each item to add price
                 //item good item, not errors
-                //.process(addTotalPrice)
+                .process(addTotalPrice)
                 .aggregate(constant(true), batchAggregationStrategy(newOrder))
                 .completionPredicate(batchSizePredicate())
                 .completionTimeout(BATCH_TIME_OUT)
                 //.setProperty("order", newOrder)
-                //.bean(OrderWriterJson.class, "writeJson(${body})")
+                //.setProperty("totPrice", simple(newOrder.getTotPrice() + ""))
+                .bean(OrderWriterJson.class, "writeJson(${body},${header.totPrice})")
                 .to(CSV_OUTPUT_DIRECTORY + "?fileName=output.txt")
         ;
     }

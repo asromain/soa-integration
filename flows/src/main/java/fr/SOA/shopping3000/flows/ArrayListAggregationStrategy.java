@@ -7,9 +7,6 @@ import org.apache.camel.Message;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class ArrayListAggregationStrategy implements AggregationStrategy {
     private Order order = null;
@@ -24,13 +21,16 @@ public class ArrayListAggregationStrategy implements AggregationStrategy {
         Message newIn = newExchange.getIn();
         Object newBody = newIn.getBody();
         //Map<String, Object> map = null;
-        List list = null;
+        ArrayList<Object> list = null;
         //String aggregation = null;
         if (oldExchange == null) {
             //map = new HashMap<String, Object>();
-            list = new ArrayList();
+            list = new ArrayList<Object>();
             //aggregation = "";
             //map.put("" + map.keySet().size(),newBody);
+            Product p = (Product)newBody;
+            //order.setTotPrice(order.getTotPrice() + p.getPrice());
+            newIn.setHeader("totPrice", p.getPrice());
             list.add(newBody);
             //order.setTotPrice(((Product)newBody).getPrice());
             //aggregation += newBody.toString();
@@ -44,7 +44,10 @@ public class ArrayListAggregationStrategy implements AggregationStrategy {
             //map = in.getBody(Map.class);
             list = in.getBody(ArrayList.class);
             //map.put("" + map.keySet().size(), newBody);
+            //Product p = (Product)newBody;
+            //order.setTotPrice(order.getTotPrice() + p.getPrice());
             list.add(newBody);
+            in.setHeader("totPrice",(Double)in.getHeader("totPrice") + ((Product)newBody).getPrice());
             //aggregation += newBody.toString();
             //order.setTotPrice(order.getTotPrice() + ((Product)newBody).getPrice());
             //in.setBody(aggregation);

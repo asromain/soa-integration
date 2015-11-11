@@ -18,13 +18,13 @@ public class HandleItem extends RouteBuilder {
                         //.setProperty("person", body())
                         //.setProperty("orderId", "12345")
                 .log("      Calling an existing generator")
-                .choice()
-                .when(simple("${body.color}"))
-                .to("direct:coucou")
-                .when(simple("${body.income} >= 42000"))
-                .when(simple("${body.income} >= 42000"))
-                .otherwise()
-                .to("direct:badItem").stop() // stopping the route for bad citizens
+                //.choice()
+                //.when(simple("${body.color}"))
+                //.to("direct:coucou")
+                //.when(simple("${body.income} >= 42000"))
+                //.when(simple("${body.income} >= 42000"))
+                //.otherwise()
+                //.to("direct:badItem").stop() // stopping the route for bad citizens
                 .end() // End of the content-based-router
         //.to(HANDLE_ORDER)
         ;
