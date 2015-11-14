@@ -1,55 +1,55 @@
 package fr.SOA.shopping3000.flows;
 
-import static fr.SOA.shopping3000.flows.utils.Endpoints.*;
-
-import fr.SOA.shopping3000.flows.business.Order;
 import fr.SOA.shopping3000.flows.business.Product;
+import fr.SOA.shopping3000.flows.utils.Database;
 import fr.SOA.shopping3000.flows.utils.OrderWriterJson;
 import org.apache.camel.Exchange;
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 
-import java.util.List;
 import java.util.Map;
-import org.apache.camel.Predicate;
+
+import static fr.SOA.shopping3000.flows.utils.Endpoints.*;
 
 public class HandleCsvFile extends RouteBuilder {
     private static final long BATCH_TIME_OUT = 3000L;
     private static final int MAX_RECORDS = 900;
-    private static Order newOrder = new Order();
+    //public static Map<String,Order> orders = new HashMap<String,Order>();
+    //public static String currentId = "";
     @Override
     public void configure() throws Exception {
 
         from(CSV_INPUT_DIRECTORY)
-                .log("Processing ${file:name}")
+                //.log("Processing ${file:id}")
                 .log("  Loading the file as a CSV document")
                 .unmarshal(buildCsvFormat())// Body is now a List(Map("navn" -> ..., ...), ...)
-                .log("Create new order")
-                //.process(newOrderCreation)
+                .process(newOrderCreation)
+                .log("Create new order ${header.orderId}")
                 .log("  Splitting the content of the file into atomic lines")
                 .split(body())
-                .log("  Transforming a CSV line into a Person")
+                .log("  Transforming a CSV line into a Product")
                 .process(csv2product)
-                .log("  Transferring to the route that handle a given citizen")
-                .setProperty("item", body())
+                .log("  Transferring to the route that handle a given product")
+                //.setProperty("item", body())
                 .to(HANDLE_ITEM)
                 //process each item to add price
                 //item good item, not errors
-                .process(addTotalPrice)
-                .aggregate(constant(true), batchAggregationStrategy(newOrder))
+                //.process(addTotalPrice)
+                .aggregate(constant(true), batchAggregationStrategy())
                 .completionPredicate(batchSizePredicate())
                 .completionTimeout(BATCH_TIME_OUT)
                 //.setProperty("order", newOrder)
                 //.setProperty("totPrice", simple(newOrder.getTotPrice() + ""))
-                .bean(OrderWriterJson.class, "writeJson(${body},${header.totPrice})")
-                .to(CSV_OUTPUT_DIRECTORY + "?fileName=output.txt")
+                .bean(OrderWriterJson.class, "writeJson(${body},${header.totPrice},${header.orderId})")
+                .to(CSV_OUTPUT_DIRECTORY + "?fileName=output${header.orderId}.txt")
         ;
     }
 
-    private AggregationStrategy batchAggregationStrategy(Order newOrder) {
-        return new ArrayListAggregationStrategy(newOrder);
+    private AggregationStrategy batchAggregationStrategy( ) {
+        return new ArrayListAggregationStrategy();
     }
 
     public Predicate batchSizePredicate() {
@@ -66,22 +66,23 @@ public class HandleCsvFile extends RouteBuilder {
     }
 
     // Process a map<String -> Object> into a person
-    private static Processor addTotalPrice = new Processor() {
+    /*private static Processor addTotalPrice = new Processor() {
         public void process(Exchange exchange) throws Exception {
             // retrieving the body of the exchanged message
             Product input = (Product) exchange.getIn().getBody();
-            newOrder.setTotPrice(newOrder.getTotPrice() + input.getPrice());
+            if(!input.getShop().equals("shopError"))
+                Database.getOrder(currentId).setTotPrice(Database.getOrder(currentId).getTotPrice() + input.getPrice());
             //put order somewhere
         }
-    };
+    };*/
 
     // Process a map<String -> Object> into a person
     private static Processor newOrderCreation = new Processor() {
         public void process(Exchange exchange) throws Exception {
-            newOrder = new Order();
-            newOrder.setAddress("");
-            newOrder.setId("");
-            newOrder.setIdClient("");
+            //HandleCsvFile.currentId = Database.genUID();
+            String currentId = Database.genUID();
+            exchange.getIn().setHeader("orderId", currentId);
+            Database.createOrder(currentId, "", "");
         }
     };
 
@@ -102,8 +103,11 @@ public class HandleCsvFile extends RouteBuilder {
             for(Map.Entry<String, Object> currentEntry : data.entrySet()){
                 if(currentEntry.getKey().equals("id")){
                     p.setId((String)currentEntry.getValue());
-                    //getshop from db
-                    String shop = (String) currentEntry.getValue();
+                    //TODO getshop from db
+                    //get from bd
+                    //for each id, his shop
+                    //String shop = (String) currentEntry.getValue();
+                    String shop = "errorShop";
                     p.setShop(shop);
                 } else if(currentEntry.getKey().equals("price")){
                     p.setPrice(Double.parseDouble((String)currentEntry.getValue()));

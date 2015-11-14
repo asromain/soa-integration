@@ -9,10 +9,8 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 import java.util.ArrayList;
 
 public class ArrayListAggregationStrategy implements AggregationStrategy {
-    private Order order = null;
-    public ArrayListAggregationStrategy(Order order) {
+    public ArrayListAggregationStrategy() {
         super();
-        this.order = order;
     }
 
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
