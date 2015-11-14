@@ -2,6 +2,7 @@ package fr.SOA.shopping3000.flows.business;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,15 +21,20 @@ public class Product implements Serializable {
 
     private Map<String, String> specializedAttributes;
 
+    private Map<String, List<String>> personalisations;
+
     public Product() {
         this.specializedAttributes = new HashMap<String, String>();
+        this.personalisations = new HashMap<String, List<String>>();
     }
+
     public Product(String id, String name, String shop, double price) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.shop = shop;
         this.specializedAttributes = new HashMap<String, String>();
+        this.personalisations = new HashMap<String, List<String>>();
     }
 
     public String getId() {
@@ -78,5 +84,13 @@ public class Product implements Serializable {
 
     public String deleteSpecializedAttribute(String key) {
         return specializedAttributes.remove(key);
+    }
+
+    public Map<String, List<String>> getPersonalisations() {
+        return personalisations;
+    }
+
+    public void setPersonalisation(String key, List<String> value) {
+        this.personalisations.put(key, value);
     }
 }

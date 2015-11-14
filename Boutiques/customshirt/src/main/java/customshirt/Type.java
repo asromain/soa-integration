@@ -13,7 +13,7 @@ public class Type {
 		map.put(3, "homme col v");
 		map.put(4, "femme col v");
 		map.put(5, "homme manches longues");
-		map.put(6, "");
+		map.put(6, "femme manches longues");
 
 	}
 
