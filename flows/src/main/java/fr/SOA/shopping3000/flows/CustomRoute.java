@@ -35,6 +35,8 @@ public class CustomRoute extends RouteBuilder {
 //                .to("activemq:getCustomShoes")
 //                .to("activemq:getCustomShirt")
                 .to("activemq:getCustomArt")
+                .to("activemq:getCustomArt")
+                .to("activemq:getCustomArt")
                 .aggregationStrategy(strat)
                 .marshal()
                 .json(JsonLibrary.Jackson)
@@ -75,22 +77,27 @@ public class CustomRoute extends RouteBuilder {
                 return oldExchange;
             }
 
-            ArrayList<HashMap<String, ArrayList>> first = oldExchange.getIn().getBody(ArrayList.class);
-            ArrayList<HashMap<String, ArrayList>> second = newExchange.getIn().getBody(ArrayList.class);
+            ArrayList first = oldExchange.getIn().getBody(ArrayList.class);
+            ArrayList second = newExchange.getIn().getBody(ArrayList.class);
 
             System.out.println("OldExchange "+oldExchange.getIn().getBody(ArrayList.class));
             System.out.println("NewExchange "+newExchange.getIn().getBody(ArrayList.class));
 
-            ArrayList<HashMap<String, ArrayList>> third = new ArrayList<HashMap<String, ArrayList>>();
+            ArrayList third = new ArrayList();
 
 
-            for (HashMap<String, ArrayList> elem : first){
-                third.add(elem);
-            }
-
-//            for (HashMap<String, ArrayList> elem : second){
+//            for (ArrayList elem : first){
 //                third.add(elem);
 //            }
+//
+//            if (newExchange.getIn().getBody().toString() != "[34, 34]") {
+//                for (HashMap<String, ArrayList> elem : second) {
+//                    third.add(elem);
+//                }
+//            }
+            third.addAll(first);
+            third.addAll(second);
+
             oldExchange.getIn().setBody(third);
             return oldExchange;
         }
