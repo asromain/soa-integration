@@ -80,21 +80,8 @@ public class CustomRoute extends RouteBuilder {
             ArrayList first = oldExchange.getIn().getBody(ArrayList.class);
             ArrayList second = newExchange.getIn().getBody(ArrayList.class);
 
-            System.out.println("OldExchange "+oldExchange.getIn().getBody(ArrayList.class));
-            System.out.println("NewExchange "+newExchange.getIn().getBody(ArrayList.class));
-
             ArrayList third = new ArrayList();
 
-
-//            for (ArrayList elem : first){
-//                third.add(elem);
-//            }
-//
-//            if (newExchange.getIn().getBody().toString() != "[34, 34]") {
-//                for (HashMap<String, ArrayList> elem : second) {
-//                    third.add(elem);
-//                }
-//            }
             third.addAll(first);
             third.addAll(second);
 
