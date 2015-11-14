@@ -95,7 +95,7 @@ public class Database {
     private static Map<String, Order> dbOrders = new HashMap<String, Order>();
 
     /**
-     * Initialise la base de donnée dbOrders
+     * Initialise la base de donnï¿½e dbOrders
      * @param order
      */
     public static void initDbOrders(Order order) {

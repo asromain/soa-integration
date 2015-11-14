@@ -57,7 +57,7 @@ public class PaymentService {
 		// et donc set une date_paid dans command pour que l'on puisse tester un non retour si plus de 30 jours
 		
 		// il faut qu'un type dans les entrepots puisse :
-		// set status delivery a "envoyé"
+		// set status delivery a "envoyï¿½"
 		// 
 		
 		// Proceed payment
