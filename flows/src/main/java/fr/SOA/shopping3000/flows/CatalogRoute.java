@@ -107,7 +107,7 @@ public class CatalogRoute extends RouteBuilder {
                 .log(LoggingLevel.INFO, "Ajout d'une liste de Product a la DB")
                 .split(body())
                 .bean(Database.class, "addProduct(${body})")
-//                .bean(Database.class, "TESTaddProduct()")
+//              .bean(Database.class, "TESTaddProduct()")
         ;
 
 
@@ -150,6 +150,7 @@ public class CatalogRoute extends RouteBuilder {
                  add("url/exemple/image.jpg");
                 }
             };
+
             for (Map map : input) {
                 String name = (String)map.get("description");
                 Double prix = Double.valueOf(map.get("price").toString());
