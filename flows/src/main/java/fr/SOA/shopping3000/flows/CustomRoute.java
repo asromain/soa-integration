@@ -35,8 +35,6 @@ public class CustomRoute extends RouteBuilder {
 //                .to("activemq:getCustomShoes")
 //                .to("activemq:getCustomShirt")
                 .to("activemq:getCustomArt")
-                .to("activemq:getCustomArt")
-                .to("activemq:getCustomArt")
                 .aggregationStrategy(strat)
                 .marshal()
                 .json(JsonLibrary.Jackson)
