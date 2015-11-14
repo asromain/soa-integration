@@ -145,6 +145,11 @@ public class CatalogRoute extends RouteBuilder {
         private ArrayList<Product> translater(ArrayList<Map<String, Object>> input) {
             ArrayList<Product> output = new ArrayList<Product>();
 
+            List<String> artsCustomNeed = new ArrayList<String>() {
+                {
+                 add("url/exemple/image.jpg");
+                }
+            };
             for (Map map : input) {
                 String name = (String)map.get("description");
                 Double prix = Double.valueOf(map.get("price").toString());
@@ -157,6 +162,7 @@ public class CatalogRoute extends RouteBuilder {
                 // Champs supplémentaires
                 product.setSpecializedAttribute("url", url);
                 product.setSpecializedAttribute("available", ((Boolean)map.get("available")).toString());
+                product.setPersonalisation("personalisations",artsCustomNeed );
 
                 output.add(product);
             }
@@ -225,7 +231,6 @@ public class CatalogRoute extends RouteBuilder {
             }
 
             //product.setPersonalisation("color", persosForCatalog);
-
 
             output.add(product);
             return output;

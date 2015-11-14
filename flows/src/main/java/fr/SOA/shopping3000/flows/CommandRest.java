@@ -185,10 +185,5 @@ public class CommandRest extends RouteBuilder {
 
             return csvHeader+csvProducts;
         }
-
-
     };
-
-
-
 }
