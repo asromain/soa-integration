@@ -1,7 +1,5 @@
 package fr.SOA.shopping3000.flows;
 
-import fr.SOA.shopping3000.flows.business.Product;
-import fr.SOA.shopping3000.flows.utils.Endpoints;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
@@ -11,8 +9,6 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Created by user on 09/11/2015.
@@ -26,25 +22,23 @@ public class CustomRoute extends RouteBuilder {
         rest("/custom")
                 .get()
                 .to("direct:getCustomParameters")
+
         ;
 
         from("direct:getCustomParameters")
                 .setHeader(Exchange.HTTP_METHOD, constant("GET"))
                 .setBody(constant(""))
-                .log(LoggingLevel.INFO, "BEFORE MULTICAST")
-                .multicast(strat)
-//                .parallelProcessing()
-                .to("direct:getCustomShoes")
-                .to("direct:getCustomShirt")
-                .to("direct:getCustomArt")
-//                .aggregationStrategy(strat)
-                .end()
-                .log(LoggingLevel.INFO, "AFTER END")
+                .multicast()
+                .parallelProcessing()
+                .to("activemq:getCustomShoes")
+//                .to("activemq:getCustomShirt")
+                .to("activemq:getCustomArt")
+                .aggregationStrategy(strat)
                 .marshal()
                 .json(JsonLibrary.Jackson)
         ;
 
-        from("direct:getCustomShoes")
+        from("activemq:getCustomShoes")
         // TODO renvoyer ArrayList<HashMap<String, ArrayList>> qui represente les parametres de personalisation
         // ex : [ { "Couleur" : [ "jaune", "rouge", ... ] } , { "Taille" : [ "S", "M", ... ] } ]
 //                .log(LoggingLevel.INFO, "CUSTOM --- DEBUT")
@@ -73,21 +67,21 @@ public class CustomRoute extends RouteBuilder {
 //                .marshal()
 //                .json(JsonLibrary.Jackson)
                 .log(LoggingLevel.INFO, "Get custom parameters Shoes")
-                .setBody(constant("[ {\"key1\": [ {\"key\" : \"valueA\"} ] }, {\"key2\": [ {\"key\": \"valueB\"} ] } ]"))
+                .process(processGetCustomArtNeed)
         ;
 
-        from("direct:getCustomShirt")
-        // TODO renvoyer ArrayList<HashMap<String, ArrayList>> qui represente les parametres de personalisation
-        // ex : [ { "Couleur" : [ "jaune", "rouge", ... ] } , { "Taille" : [ "S", "M", ... ] } ]
+        from("activemq:getCustomShirt")
+                // TODO renvoyer ArrayList<HashMap<String, ArrayList>> qui represente les parametres de personalisation
+                // ex : [ { "Couleur" : [ "jaune", "rouge", ... ] } , { "Taille" : [ "S", "M", ... ] } ]
                 .log(LoggingLevel.INFO, "Get custom parameters Shirt")
-                .setBody(constant("[ {\"key1\": [ {\"key\" : \"valueA\"} ] }, {\"key2\": [ {\"key\": \"valueB\"} ] } ]"))
+                .process(processGetCustomArtNeed)
         ;
 
-        from("direct:getCustomArt")
-        // TODO renvoyer ArrayList<HashMap<String, ArrayList>> qui represente les parametres de personalisation
-        // ex : [ { "Couleur" : [ "jaune", "rouge", ... ] } , { "Taille" : [ "S", "M", ... ] } ]
+        from("activemq:getCustomArt")
+                // TODO renvoyer ArrayList<HashMap<String, ArrayList>> qui represente les parametres de personalisation
+                // ex : [ { "Couleur" : [ "jaune", "rouge", ... ] } , { "Taille" : [ "S", "M", ... ] } ]
                 .log(LoggingLevel.INFO, "Get custom parameters Arts")
-                .setBody(constant("[ {\"key1\": [ {\"key\" : \"valueA\"} ] }, {\"key2\": [ {\"key\": \"valueB\"} ] } ]"))
+                .process(processGetCustomArtNeed)
         ;
 
     }
@@ -115,6 +109,7 @@ public class CustomRoute extends RouteBuilder {
     };
 
     AggregationStrategy strat = new AggregationStrategy() {
+
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
 
             if (oldExchange == null) {
@@ -126,10 +121,10 @@ public class CustomRoute extends RouteBuilder {
                 return oldExchange;
             }
 
-            ArrayList<HashMap<String, ArrayList>> first = oldExchange.getIn().getBody(ArrayList.class);
-            ArrayList<HashMap<String, ArrayList>> second = newExchange.getIn().getBody(ArrayList.class);
+            ArrayList first = oldExchange.getIn().getBody(ArrayList.class);
+            ArrayList second = newExchange.getIn().getBody(ArrayList.class);
 
-            ArrayList<HashMap<String, ArrayList>> third = new ArrayList<HashMap<String, ArrayList>>();
+            ArrayList third = new ArrayList();
 
             if (first != null) {
                 third.addAll(first);
@@ -138,11 +133,35 @@ public class CustomRoute extends RouteBuilder {
                 third.addAll(second);
             }
 
-            if (!third.isEmpty()) {
-                newExchange.getIn().setBody(third);
-            }
-
-            return newExchange;
+            oldExchange.getIn().setBody(third);
+            return oldExchange;
         }
     };
+
+
+    private static Processor processGetCustomArtNeed = new Processor() {
+
+        public void process(Exchange exchange) throws Exception {
+            ArrayList<HashMap<String, ArrayList>> output = getUrl();
+            exchange.getIn().setBody(output);
+        }
+
+        public ArrayList<HashMap<String, ArrayList>> getUrl() {
+
+            ArrayList<HashMap<String, ArrayList>> output = new ArrayList<HashMap<String, ArrayList>>();
+
+            ArrayList<String> url = new ArrayList<String>();
+            url.add("\"url/exemple/image.jpg\"");
+
+            HashMap<String, ArrayList> mapUrl = new HashMap<String, ArrayList>();
+            mapUrl.put("urlExemple", url);
+
+            output.add(mapUrl);
+            return output;
+        }
+    };
+
 }
+
+
+
