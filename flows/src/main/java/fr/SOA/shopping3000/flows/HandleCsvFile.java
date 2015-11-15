@@ -1,5 +1,6 @@
 package fr.SOA.shopping3000.flows;
 
+import fr.SOA.shopping3000.flows.business.Order;
 import fr.SOA.shopping3000.flows.business.Product;
 import fr.SOA.shopping3000.flows.utils.Database;
 import fr.SOA.shopping3000.flows.utils.OrderWriterJson;
@@ -10,6 +11,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 
+import javax.xml.crypto.Data;
 import java.util.Map;
 
 import static fr.SOA.shopping3000.flows.utils.Endpoints.*;
@@ -43,7 +45,7 @@ public class HandleCsvFile extends RouteBuilder {
                 .completionTimeout(BATCH_TIME_OUT)
                 //.setProperty("order", newOrder)
                 //.setProperty("totPrice", simple(newOrder.getTotPrice() + ""))
-                .bean(OrderWriterJson.class, "writeJson(${body},${header.totPrice},${header.orderId})")
+                .bean(OrderWriterJson.class, "writeJson(${body},${header.totPrice},${header.orderId},${header.order_address})")
                 .to(CSV_OUTPUT_DIRECTORY + "?fileName=output${header.orderId}.txt")
         ;
     }
@@ -66,56 +68,51 @@ public class HandleCsvFile extends RouteBuilder {
     }
 
     // Process a map<String -> Object> into a person
-    /*private static Processor addTotalPrice = new Processor() {
-        public void process(Exchange exchange) throws Exception {
-            // retrieving the body of the exchanged message
-            Product input = (Product) exchange.getIn().getBody();
-            if(!input.getShop().equals("shopError"))
-                Database.getOrder(currentId).setTotPrice(Database.getOrder(currentId).getTotPrice() + input.getPrice());
-            //put order somewhere
-        }
-    };*/
-
-    // Process a map<String -> Object> into a person
     private static Processor newOrderCreation = new Processor() {
         public void process(Exchange exchange) throws Exception {
             //HandleCsvFile.currentId = Database.genUID();
             String currentId = Database.genUID();
             exchange.getIn().setHeader("orderId", currentId);
             Database.createOrder(currentId, "", "");
+            //Database.createProduct("ea3d5a8c-a12b-4740-ae89-dfd6a4a65b43", "name1", "customshoes", 3.0);
+            //Database.createProduct("customshirt-1", "name2", "customshirt", 5.0);
         }
     };
 
-    // Process a map<String -> Object> into a person
+    // Process a map<String -> Object> into a product
     private static Processor csv2product = new Processor() {
 
         public void process(Exchange exchange) throws Exception {
             // retrieving the body of the exchanged message
             Map<String, Object> input = (Map<String, Object>) exchange.getIn().getBody();
-            // transforming the input into a person
-            Product output =  builder(input);
+            // transforming the input into a product
+            Product output =  builder(input, (String)(exchange.getIn().getHeader("orderId")));
             // Putting the person inside the body of the message
             exchange.getIn().setBody(output);
         }
 
-        private Product builder(Map<String, Object> data) {
-            Product p = new Product();
-            for(Map.Entry<String, Object> currentEntry : data.entrySet()){
-                if(currentEntry.getKey().equals("id")){
-                    p.setId((String)currentEntry.getValue());
-                    //TODO getshop from db
-                    //get from bd
-                    //for each id, his shop
-                    //String shop = (String) currentEntry.getValue();
-                    String shop = "errorShop";
-                    p.setShop(shop);
-                } else if(currentEntry.getKey().equals("price")){
-                    p.setPrice(Double.parseDouble((String)currentEntry.getValue()));
-                } else if(currentEntry.getKey().equals("name")){
-                    p.setName((String) currentEntry.getValue());
-                } else {
+        private Product builder(Map<String, Object> data, String orderId) {
+            //get order address
+            String orderAddress = (String) data.get("order_address");
+            Order currentOrder = Database.getOrder(orderId);
+            if(currentOrder.getAddress().equals(""))
+                currentOrder.setAddress(orderAddress);
+            data.remove("order_address");
+
+            //check product
+            String productId = (String)data.get("product_id");
+            Product p = Database.getProduct(productId);
+
+            if(p != null) {
+                data.remove("product_id");
+                for (Map.Entry<String, Object> currentEntry : data.entrySet()) {
                     p.setSpecializedAttribute(currentEntry.getKey(), (String) currentEntry.getValue());
                 }
+            }else {
+                p = new Product();
+                p.setId(productId);
+                p.setShop("errorShop");
+                p.setPrice(0.0);
             }
             return p;
         }

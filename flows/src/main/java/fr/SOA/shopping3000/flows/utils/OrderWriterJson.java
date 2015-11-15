@@ -8,7 +8,7 @@ import java.util.List;
  * Created by zeibetsu on 09/11/2015.
  */
 public class OrderWriterJson {
-    public String writeJson(List body, String totPrice, String orderId) {
+    public String writeJson(List body, String totPrice, String orderId, String orderAddress) {
         StringBuilder b = new StringBuilder();
         for(Object currentObject : body) {
             Product currentProduct = (Product)currentObject;
@@ -18,8 +18,9 @@ public class OrderWriterJson {
             b.append("  shop: " + currentProduct.getShop() + "\n");
             b.append("  price: " + currentProduct.getPrice() + "\n\n");
         }
-        b.append("\n\n OrderId: " + orderId  + "\n");
-        b.append("total Price: " + totPrice);
+        b.append("\n\n  OrderId: " + orderId  + "\n");
+        b.append("  Order Address: " + orderAddress  + "\n");
+        b.append("  total Price: " + totPrice);
         return b.toString();
     }
 }

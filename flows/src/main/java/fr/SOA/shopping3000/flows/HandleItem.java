@@ -40,7 +40,6 @@ public class HandleItem extends RouteBuilder {
         // bad information about a given item
         from("direct:shopError")
                 .log("    Bad information for item ${body.id}, shop not available.")
-                .bean(BadItemWriter.class, "writeBadItem($(body})")
                 .end()
         ;
 
