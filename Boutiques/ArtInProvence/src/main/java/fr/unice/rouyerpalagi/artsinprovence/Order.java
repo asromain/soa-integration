@@ -16,8 +16,8 @@ public class Order {
         NEW, // Nouvelle commande
         WAITING_VALIDATION, // En attente de validation (paiement)
         IN_PROGRESS, // En cours de progression
-        CANCELED, // Annulée
-        FINISH // Livrée
+        CANCELED, // Annulï¿½e
+        FINISH // Livrï¿½e
     }
 
     // region PROPERTIES

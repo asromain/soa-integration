@@ -6,7 +6,7 @@ package fr.unice.rouyerpalagi.artsinprovence;
 
 /**
  *
- *  structuration de la réponse Get client ?
+ *  structuration de la rï¿½ponse Get client ?
  *
  */
 
