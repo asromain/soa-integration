@@ -198,7 +198,9 @@ public class CustomRoute extends RouteBuilder {
 
             ArrayList<HashMap<String, ArrayList>> output = new ArrayList<HashMap<String, ArrayList>>();
 
-            Product product = Database.getProduct("customshirt-1");
+//            Product product = Database.getProduct("customshirt-1");
+
+            Product product = null;
 
             if (product == null) {
 
