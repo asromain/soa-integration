@@ -10,15 +10,18 @@ import java.util.List;
 public class OrderWriterJson {
     public String writeJson(List body, String totPrice, String orderId, String orderAddress) {
         StringBuilder b = new StringBuilder();
+        b.append("{\"OrderId\": \"" + orderId  + "\",");
+        b.append("\"Order Address\": \"" + orderAddress  + "\",");
+        b.append("\"total Price\": \"" + totPrice + "\",");
+        b.append("\"products\": [");
         for(Object currentObject : body) {
             Product currentProduct = (Product)currentObject;
-            b.append("  id: " + currentProduct.getId() + "\n");
-            b.append("  shop: " + currentProduct.getShop() + "\n");
-            b.append("  price: " + currentProduct.getPrice() + "\n\n");
+            b.append("{\"id\": \"" + currentProduct.getId() + "\",");
+            b.append("\"shop\": \"" + currentProduct.getShop() + "\",");
+            b.append("\"price\": \"" + currentProduct.getPrice() + "\"},");
         }
-        b.append("\n\n  OrderId: " + orderId  + "\n");
-        b.append("  Order Address: " + orderAddress  + "\n");
-        b.append("  total Price: " + totPrice);
+        b.deleteCharAt(b.length()-1);
+        b.append("]}");
         return b.toString();
     }
 }
