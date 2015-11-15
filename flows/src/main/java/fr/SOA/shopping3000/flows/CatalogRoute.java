@@ -260,7 +260,7 @@ public class CatalogRoute extends RouteBuilder {
                     persosForCatalog.add(lhm);
                 }
                 // c'est un hashmap donc ca remplace l'ancien si deja existant
-                product.setPersonalisation(entry.getKey(), persosForCatalog);
+                //product.setPersonalisation(entry.getKey(), persosForCatalog);
             }
 
             //product.setPersonalisation("color", persosForCatalog);

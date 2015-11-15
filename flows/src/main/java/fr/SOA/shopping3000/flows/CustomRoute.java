@@ -40,32 +40,7 @@ public class CustomRoute extends RouteBuilder {
 
         from("activemq:getCustomShoes")
         // TODO renvoyer ArrayList<HashMap<String, ArrayList>> qui represente les parametres de personalisation
-        // ex : [ { "Couleur" : [ "jaune", "rouge", ... ] } , { "Taille" : [ "S", "M", ... ] } ]
-//                .log(LoggingLevel.INFO, "CUSTOM --- DEBUT")
-//                .setHeader(Exchange.HTTP_METHOD, constant("GET"))
-//                .setBody(constant(""))
-//                .log(LoggingLevel.INFO, "CUSTOM --- MULTICAST START")
-//                .multicast()
-//                .to(Endpoints.BASE_URL + Endpoints.BASE_SHOES + "/custom" + "/cleats" + Endpoints.BRIDGE)
-//                .log(LoggingLevel.INFO, "CUSTOM --- MULTICAST 1 --- UNMARSHALL")
-//                .unmarshal()
-//                .json(JsonLibrary.Jackson)
-//                .process(processShoesCustomParameters)
-//                .to(Endpoints.BASE_URL + Endpoints.BASE_SHOES + "/custom" + "/colors" + Endpoints.BRIDGE)
-//                .log(LoggingLevel.INFO, "CUSTOM --- MULTICAST 2 --- UNMARSHALL")
-////                .unmarshal()
-////                .json(JsonLibrary.Jackson, ArrayList.class)
-//                .process(processShoesCustomParameters)
-//                .to(Endpoints.BASE_URL + Endpoints.BASE_SHOES + "/custom" + "/sizes" + Endpoints.BRIDGE)
-//                .log(LoggingLevel.INFO, "CUSTOM --- MULTICAST 3 --- UNMARSHALL")
-////                .unmarshal()
-////                .json(JsonLibrary.Jackson, ArrayList.class)
-//                .process(processShoesCustomParameters)
-//                .end()
-//                .log(LoggingLevel.INFO, "CUSTOM --- MULTICAST END")
-////                .process(processAllShoes)
-//                .marshal()
-//                .json(JsonLibrary.Jackson)
+
                 .log(LoggingLevel.INFO, "Get custom parameters Shoes")
                 .process(processGetCustomArtNeed)
         ;
