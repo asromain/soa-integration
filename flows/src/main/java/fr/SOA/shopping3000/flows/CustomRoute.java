@@ -39,35 +39,16 @@ public class CustomRoute extends RouteBuilder {
         from("activemq:getCustomShoes")
                 // TODO renvoyer ArrayList<HashMap<String, ArrayList>> qui represente les parametres de personalisation
                 // ex : [ { "Couleur" : [ "jaune", "rouge", ... ] } , { "Taille" : [ "S", "M", ... ] } ]
-//                .log(LoggingLevel.INFO, "CUSTOM --- DEBUT")
-//                .setHeader(Exchange.HTTP_METHOD, constant("GET"))
-//                .setBody(constant(""))
-//                .log(LoggingLevel.INFO, "CUSTOM --- MULTICAST START")
-//                .multicast()
-//                .to(Endpoints.BASE_URL + Endpoints.BASE_SHOES + "/custom" + "/cleats" + Endpoints.BRIDGE)
-//                .log(LoggingLevel.INFO, "${body}")
-//                .unmarshal()
-//                .json(JsonLibrary.Jackson, Map.class)
-////                .process(processShoesCustomParameters)
-//                .log(LoggingLevel.INFO, "${body}")
-//                .process(processShoesCustomParameters)
-//                .to(Endpoints.BASE_URL + Endpoints.BASE_SHOES + "/custom" + "/colors" + Endpoints.BRIDGE)
-//                .log(LoggingLevel.INFO, "CUSTOM --- MULTICAST 2 --- UNMARSHALL")
-////                .unmarshal()
-////                .json(JsonLibrary.Jackson, ArrayList.class)
-//                .process(processShoesCustomParameters)
-//                .to(Endpoints.BASE_URL + Endpoints.BASE_SHOES + "/custom" + "/sizes" + Endpoints.BRIDGE)
-//                .log(LoggingLevel.INFO, "CUSTOM --- MULTICAST 3 --- UNMARSHALL")
-////                .unmarshal()
-////                .json(JsonLibrary.Jackson, ArrayList.class)
-//                .process(processShoesCustomParameters)
-//                .end()
-//                .log(LoggingLevel.INFO, "CUSTOM --- MULTICAST END")
-////                .process(processAllShoes)
-//                .marshal()
-//                .json(JsonLibrary.Jackson)
+
+                /*
+
+                Impossible de traiter les données reçues par nos webservices après beaucoup d'heures de tentatives
+                Ce code est donc mocké
+
+                 */
+
                 .log(LoggingLevel.INFO, "Get custom parameters Shoes")
-                .process(processGetCustomArtNeed)
+                .process(processShoesCustomParameters)
         ;
 
         from("activemq:getCustomShirt")
@@ -156,8 +137,111 @@ public class CustomRoute extends RouteBuilder {
 
     private static Processor processShoesCustomParameters = new Processor() {
         public void process(Exchange exchange) throws Exception {
-            HashMap<String, String> input = (HashMap<String, String>) exchange.getIn().getBody();
-            exchange.getIn().setBody(input);
+            ArrayList<HashMap<String, ArrayList>> output = getUrl();
+            exchange.getIn().setBody(output);
+        }
+
+        public ArrayList<HashMap<String, ArrayList>> getUrl() {
+
+            ArrayList<HashMap<String, ArrayList>> output = new ArrayList<HashMap<String, ArrayList>>();
+
+            ArrayList<String> cleatsData = new ArrayList<String>();
+            cleatsData.add("\"0\": [\n" +
+                    "    \"FG : Firm Ground\"\n" +
+                    "  ],\n" +
+                    "  \"1\": [\n" +
+                    "    \"SG : Soft Ground\"\n" +
+                    "  ],\n" +
+                    "  \"2\": [\n" +
+                    "    \"H : Hybrid\"\n" +
+                    "  ],\n" +
+                    "  \"3\": [\n" +
+                    "    \"HG : Hard ground\"\n" +
+                    "  ],\n" +
+                    "  \"4\": [\n" +
+                    "    \"AG : Artificial ground\"\n" +
+                    "  ],\n" +
+                    "  \"5\": [\n" +
+                    "    \"AT : Astro turf\"\n" +
+                    "  ]");
+
+            HashMap<String, ArrayList> cleats = new HashMap<String, ArrayList>();
+            cleats.put("Cleats", cleatsData);
+
+            ArrayList<String> colorsData = new ArrayList<String>();
+            colorsData.add("\"0\": [\n" +
+                    "    \"Black\"\n" +
+                    "  ],\n" +
+                    "  \"1\": [\n" +
+                    "    \"White\"\n" +
+                    "  ],\n" +
+                    "  \"2\": [\n" +
+                    "    \"Grey\"\n" +
+                    "  ],\n" +
+                    "  \"3\": [\n" +
+                    "    \"Blue\"\n" +
+                    "  ],\n" +
+                    "  \"4\": [\n" +
+                    "    \"Yellow\"\n" +
+                    "  ],\n" +
+                    "  \"5\": [\n" +
+                    "    \"Green\"\n" +
+                    "  ],\n" +
+                    "  \"6\": [\n" +
+                    "    \"Red\"\n" +
+                    "  ],\n" +
+                    "  \"7\": [\n" +
+                    "    \"Pink\"\n" +
+                    "  ],\n" +
+                    "  \"8\": [\n" +
+                    "    \"Orange\"\n" +
+                    "  ],\n" +
+                    "  \"9\": [\n" +
+                    "    \"Brown\"\n" +
+                    "  ]");
+
+            HashMap<String, ArrayList> colors = new HashMap<String, ArrayList>();
+            colors.put("Colors", colorsData);
+
+            ArrayList<String> sizeData = new ArrayList<String>();
+            sizeData.add("\"0\": [\n" +
+                    "    \"41\"\n" +
+                    "  ],\n" +
+                    "  \"1\": [\n" +
+                    "    \"41.5\"\n" +
+                    "  ],\n" +
+                    "  \"2\": [\n" +
+                    "    \"42\"\n" +
+                    "  ],\n" +
+                    "  \"3\": [\n" +
+                    "    \"42.5\"\n" +
+                    "  ],\n" +
+                    "  \"4\": [\n" +
+                    "    \"43\"\n" +
+                    "  ],\n" +
+                    "  \"5\": [\n" +
+                    "    \"43.5\"\n" +
+                    "  ],\n" +
+                    "  \"6\": [\n" +
+                    "    \"44\"\n" +
+                    "  ],\n" +
+                    "  \"7\": [\n" +
+                    "    \"44.5\"\n" +
+                    "  ],\n" +
+                    "  \"8\": [\n" +
+                    "    \"45\"\n" +
+                    "  ],\n" +
+                    "  \"9\": [\n" +
+                    "    \"45.5\"\n" +
+                    "  ]");
+
+            HashMap<String, ArrayList> size = new HashMap<String, ArrayList>();
+            size.put("Sizes", sizeData);
+
+            output.add(cleats);
+            output.add(colors);
+            output.add(size);
+            return output;
         }
     };
 
