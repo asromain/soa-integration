@@ -3,10 +3,7 @@ package fr.SOA.shopping3000.flows.business;
 import fr.SOA.shopping3000.flows.utils.Database;
 
 import java.io.Serializable;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,8 +16,6 @@ public class Order implements Serializable {
     private String idClient;
     private String address;
     private double totPrice;
-
-    //private List<String> productIds;
 
     private Map<String, Map<String, String>> productIds;
 
