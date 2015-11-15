@@ -25,7 +25,6 @@ public class HandleCsvFile extends RouteBuilder {
     public void configure() throws Exception {
 
         from(CSV_INPUT_DIRECTORY)
-                //.log("Processing ${file:id}")
                 .log("  Loading the file as a CSV document")
                 .unmarshal(buildCsvFormat())// Body is now a List(Map("navn" -> ..., ...), ...)
                 .process(newOrderCreation)
@@ -35,16 +34,10 @@ public class HandleCsvFile extends RouteBuilder {
                 .log("  Transforming a CSV line into a Product")
                 .process(csv2product)
                 .log("  Transferring to the route that handle a given product")
-                //.setProperty("item", body())
                 .to(HANDLE_ITEM)
-                //process each item to add price
-                //item good item, not errors
-                //.process(addTotalPrice)
                 .aggregate(constant(true), batchAggregationStrategy())
                 .completionPredicate(batchSizePredicate())
                 .completionTimeout(BATCH_TIME_OUT)
-                //.setProperty("order", newOrder)
-                //.setProperty("totPrice", simple(newOrder.getTotPrice() + ""))
                 .bean(OrderWriterJson.class, "writeJson(${body},${header.totPrice},${header.orderId},${header.order_address})")
                 .to(CSV_OUTPUT_DIRECTORY + "?fileName=output${header.orderId}.txt")
         ;
@@ -87,7 +80,7 @@ public class HandleCsvFile extends RouteBuilder {
             Map<String, Object> input = (Map<String, Object>) exchange.getIn().getBody();
             // transforming the input into a product
             Product output =  builder(input, (String)(exchange.getIn().getHeader("orderId")));
-            // Putting the person inside the body of the message
+            // Putting the product inside the body of the message
             exchange.getIn().setBody(output);
         }
 

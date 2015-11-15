@@ -6,7 +6,7 @@ public class Endpoints {
 
     public static final String CSV_OUTPUT_DIRECTORY = "file:camel/output";
 
-    public static final String HANDLE_ITEM = "activemq:handleItem";
+    public static final String HANDLE_ITEM = "direct:handleItem";
 
     public static final String BRIDGE = "?bridgeEndpoint=true";
 

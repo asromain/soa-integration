@@ -13,8 +13,6 @@ public class OrderWriterJson {
         for(Object currentObject : body) {
             Product currentProduct = (Product)currentObject;
             b.append("  id: " + currentProduct.getId() + "\n");
-            //if valid VALIDATED, if no shop ERROR
-            //b.append("  status: " + currentProduct.getName() + "\n");
             b.append("  shop: " + currentProduct.getShop() + "\n");
             b.append("  price: " + currentProduct.getPrice() + "\n\n");
         }
