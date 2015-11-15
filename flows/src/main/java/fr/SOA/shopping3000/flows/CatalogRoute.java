@@ -61,7 +61,9 @@ public class CatalogRoute extends RouteBuilder {
                         // On redirige la reponse de la boutique vers SON translator
                 .to("direct:processArtsTranslation")
         ;
+
         // Custom Shirts
+
         from("activemq:getRequestShirtcolors")
                 .log(LoggingLevel.INFO, "Envoi du GET a CustomShirt colors")
                 .to(Endpoints.BASE_URL + Endpoints.BASE_SHIRT + "/catalog/colors" + Endpoints.BRIDGE)
@@ -121,7 +123,11 @@ public class CatalogRoute extends RouteBuilder {
                 .log(LoggingLevel.INFO, "Ajout d'une liste de Product a la DB")
                 .split(body())
                 .bean(Database.class, "addProduct(${body})")
+
                 //.bean(Database.class, "TESTaddProduct()")
+
+//              .bean(Database.class, "TESTaddProduct()")
+
         ;
 
         /******************************************
@@ -204,12 +210,6 @@ public class CatalogRoute extends RouteBuilder {
         private ArrayList<Product> translater(ArrayList<Map<String, Object>> input) {
             ArrayList<Product> output = new ArrayList<Product>();
 
-            List<String> artsCustomNeed = new ArrayList<String>() {
-                {
-                 add("url/exemple/image.jpg");
-                }
-            };
-
             for (Map map : input) {
                 String name = (String)map.get("description");
                 Double prix = Double.valueOf(map.get("price").toString());
@@ -222,13 +222,12 @@ public class CatalogRoute extends RouteBuilder {
                 // Champs supplémentaires
                 product.setSpecializedAttribute("url", url);
                 product.setSpecializedAttribute("available", ((Boolean)map.get("available")).toString());
-                product.setPersonalisation("personalisations",artsCustomNeed );
-
                 output.add(product);
             }
             return output;
         }
     };
+
 
     // CustomShirt Processor
     private static Processor shirtTranslation = new Processor() {
@@ -265,6 +264,7 @@ public class CatalogRoute extends RouteBuilder {
             }
 
             //product.setPersonalisation("color", persosForCatalog);
+
             output.add(product);
             return output;
         }
