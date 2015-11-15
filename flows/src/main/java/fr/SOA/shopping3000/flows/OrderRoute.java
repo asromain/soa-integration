@@ -162,10 +162,5 @@ public class OrderRoute extends RouteBuilder {
 
             return csvHeader+csvProducts;
         }
-
-
     };
-
-
-
 }

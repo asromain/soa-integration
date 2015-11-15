@@ -7,8 +7,8 @@ public class Return {
 	private Integer id = null;
 	private Integer id_command_old = null;
 	private Integer id_command_new = null;
-	private List<Integer> persoIds = null; // les tshirt spécific de la old
-											// command retourné
+	private List<Integer> persoIds = null; // les tshirt spï¿½cific de la old
+											// command retournï¿½
 	private String status = "";
 
 	public Return(Integer id, Integer id_command_old, Integer id_command_new,

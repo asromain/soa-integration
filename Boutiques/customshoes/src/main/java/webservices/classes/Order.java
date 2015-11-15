@@ -1,6 +1,6 @@
 package webservices.classes;
 
-/* produit en stock et produit personnalisé même "format", ont tous crampons + couleurs + pointures */
+/* produit en stock et produit personnalisï¿½ mï¿½me "format", ont tous crampons + couleurs + pointures */
 /* 1C custom
  * 1  normal */
 
