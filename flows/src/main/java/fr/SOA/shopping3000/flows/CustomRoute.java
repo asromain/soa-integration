@@ -76,17 +76,36 @@ public class CustomRoute extends RouteBuilder {
 
                 .log(LoggingLevel.INFO, "Get custom parameters Shirt")
 
+                .multicast()
+                .to("direct:customShirtTypes")
+                .to("direct:customShirtColors")
+                .to("direct:customShirtSymbols")
+                .aggregationStrategy(strat)
+                .end()
+        ;
+
+        from("direct:customShirtTypes")
                 .to(Endpoints.BASE_URL + Endpoints.BASE_SHIRT + "/catalog/types" + Endpoints.BRIDGE)
 
                 .unmarshal().json(JsonLibrary.Jackson)
 
-                .log(LoggingLevel.INFO, "####### AVANT Z1 #######")
-                .log(LoggingLevel.INFO, "${body}")
+                .process(shirtTranslation)
+        ;
+
+        from("direct:customShirtColors")
+                .to(Endpoints.BASE_URL + Endpoints.BASE_SHIRT + "/catalog/colors" + Endpoints.BRIDGE)
+
+                .unmarshal().json(JsonLibrary.Jackson)
 
                 .process(shirtTranslation)
+        ;
 
-                .log(LoggingLevel.INFO, "####### APRES Z1 #######")
-                .log(LoggingLevel.INFO, "${body}")
+        from("direct:customShirtSymbols")
+                .to(Endpoints.BASE_URL + Endpoints.BASE_SHIRT + "/catalog/symbols" + Endpoints.BRIDGE)
+
+                .unmarshal().json(JsonLibrary.Jackson)
+
+                .process(shirtTranslation)
         ;
 
         from("activemq:getCustomArt")
