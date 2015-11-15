@@ -128,7 +128,7 @@ public class OrderRoute extends RouteBuilder {
             List<String> headers = new ArrayList<String>();
             List<List<String>> products = new ArrayList<List<String>>();
 
-            headers.add("order_id");
+            //headers.add("order_id");
             headers.add("order_address");
             headers.add("product_id");
 
@@ -137,7 +137,7 @@ public class OrderRoute extends RouteBuilder {
             for (Map.Entry<String, Map<String, String>> curProd : order.getProductIds().entrySet()) {
 
                 List<String> tmpVarValues = new ArrayList<String>();
-                tmpVarValues.add(order.getId());
+                //tmpVarValues.add(order.getId());
                 tmpVarValues.add(order.getAddress());
                 tmpVarValues.add(curProd.getKey());
 
