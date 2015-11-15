@@ -67,8 +67,8 @@ public class HandleCsvFile extends RouteBuilder {
             String currentId = Database.genUID();
             exchange.getIn().setHeader("orderId", currentId);
             Database.createOrder(currentId, "", "");
-            Database.createProduct("ea3d5a8c-a12b-4740-ae89-dfd6a4a65b43", "name1", "customshoes", 3.0);
-            Database.createProduct("customshirt-1", "name2", "customshirt", 5.0);
+            //Database.createProduct("ea3d5a8c-a12b-4740-ae89-dfd6a4a65b43", "name1", "customshoes", 3.0);
+            //Database.createProduct("customshirt-1", "name2", "customshirt", 5.0);
         }
     };
 
